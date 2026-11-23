@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar Sesión — COMPURED y Compucenter</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container nav-content">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="Logo COMPURED y Compucenter" class="brand-img" />
+        <div>
+          <h1>COMPURED &amp; COMPUCENTER</h1>
+          <span>Portal de Acceso</span>
+        </div>
+      </a>
+      <a href="index.html" class="btn btn-outline">← Volver al inicio</a>
+    </div>
+  </header>
+
+  <section class="login-wrapper">
+    <div class="login-card">
+      <h2 style="text-align:center;color:var(--cyan);">ACCESO AL SISTEMA</h2>
+      <p style="text-align:center;color:var(--muted);margin-bottom:1.25rem;font-size:0.9rem;">Ingresa tu código y contraseña asignada</p>
+
+      <form id="formLogin">
+        <div class="form-group">
+          <label>Código de Usuario / Estudiante</label>
+          <input type="text" id="loginUsuario" placeholder="Usuario" required />
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Ingresar al Portal</button>
+      </form>
+
+      <div class="login-help">
+        <button type="button" class="btn-link" onclick="document.getElementById('boxRecuperar').classList.toggle('oculto')">
+          ¿Olvidaste tu usuario o contraseña?
+        </button>
+        <div id="boxRecuperar" class="recuperar-box oculto">
+          <p style="font-size:0.83rem;color:var(--muted);">Completa tus datos para solicitar tus credenciales por WhatsApp:</p>
+          <input type="text" id="recNombre" placeholder="Nombre completo del estudiante" />
+          <select id="recSede">
+            <option value="San Juan Ostuncalco">Sede San Juan Ostuncalco</option>
+            <option value="La Esperanza">Sede La Esperanza</option>
+          </select>
+          <button type="button" class="btn btn-cyan btn-block btn-sm" onclick="recuperarWhatsApp()">
+            Solicitar por WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="loader" class="loader oculto">
+    <div class="spinner"></div>
+    <p>Autenticando...</p>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    function recuperarWhatsApp() {
+      const nombre = document.getElementById("recNombre").value.trim();
+      const sede = document.getElementById("recSede").value;
+      if (!nombre) return alert("Por favor escribe tu nombre completo.");
+      const texto = `Hola, soy ${nombre} de ${sede} y quería recuperar mi contraseña y usuario.`;
+      window.open(`https://wa.me/${WHATSAPP_ACADEMIA}?text=${encodeURIComponent(texto)}`, "_blank");
+    }
+
+    document.getElementById("formLogin").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const usuario = document.getElementById("loginUsuario").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      try {
+        const data = await llamarAPI("login", { usuario, password }, {});
+        guardarSesion(data);
+        redirigirPorRol(data.rol);
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+  </script>
+</body>
+</html>

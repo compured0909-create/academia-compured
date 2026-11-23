@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dirección General — COMPURED y Compucenter</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .boleta-oficial {
+      background: #ffffff;
+      color: #111827;
+      padding: 1.15rem 1.35rem;
+      border-radius: 10px;
+      border: 2px solid #1e3a8a;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      line-height: 1.25;
+    }
+    .boleta-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #1e3a8a;
+      padding-bottom: 0.55rem;
+      margin-bottom: 0.55rem;
+      gap: 0.75rem;
+    }
+    .boleta-header img {
+      width: 62px;
+      height: 62px;
+      object-fit: contain;
+    }
+    .boleta-titulo-centro {
+      text-align: center;
+      flex: 1;
+    }
+    .boleta-titulo-centro h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+    }
+    .boleta-titulo-centro p {
+      margin: 1px 0;
+      font-size: 0.72rem;
+      color: #334155;
+    }
+    .boleta-banda {
+      background: #1e3a8a;
+      color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      padding: 0.3rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.6px;
+      margin-bottom: 0.55rem;
+    }
+    .boleta-datos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+      margin-bottom: 0.6rem;
+    }
+    .boleta-tabla {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .boleta-tabla th {
+      background: #dbeafe;
+      color: #1e3a8a;
+      border: 1px solid #1e3a8a;
+      padding: 0.24rem 0.4rem;
+      font-size: 0.72rem;
+      text-align: center;
+    }
+    .boleta-tabla td {
+      border: 1px solid #64748b;
+      padding: 0.24rem 0.4rem;
+      font-size: 0.74rem;
+    }
+    .boleta-lbl {
+      background: #f1f5f9;
+      font-weight: bold;
+      font-size: 0.66rem;
+      color: #334155;
+      text-transform: uppercase;
+    }
+    .boleta-meses-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+      margin-bottom: 0.55rem;
+    }
+    .boleta-mes-card {
+      border: 1px solid #1e3a8a;
+      border-radius: 4px;
+      padding: 0.35rem 0.45rem;
+      text-align: center;
+      background: #f8fafc;
+    }
+    .boleta-mes-card strong {
+      display: block;
+      background: #1e3a8a;
+      color: #ffffff;
+      font-size: 0.7rem;
+      padding: 0.15rem;
+      margin: -0.35rem -0.45rem 0.3rem -0.45rem;
+    }
+    .boleta-mes-card span {
+      display: block;
+      font-size: 0.68rem;
+      margin-top: 0.22rem;
+      color: #0f172a;
+    }
+    .boleta-nota {
+      font-size: 0.68rem;
+      color: #1e293b;
+      border-top: 1px solid #94a3b8;
+      padding-top: 0.35rem;
+    }
+    .boleta-nota ul {
+      margin: 0.2rem 0 0 1.1rem;
+      padding: 0;
+    }
+    .acciones-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(95px, 1fr));
+      gap: 0.32rem;
+      min-width: 195px;
+    }
+    .solvencia-resumen {
+      display: block;
+      max-width: 205px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.25;
+      margin-top: 0.2rem;
+    }
+    .hora-deposito-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      background: rgba(5, 8, 17, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.35rem 0.65rem;
+    }
+    .hora-deposito-campos {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+    .hora-deposito-campos select {
+      width: auto;
+      min-width: 58px;
+      padding: 0.32rem 0.38rem;
+      font-size: 0.85rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 6px;
+      color: var(--white);
+    }
+    .hora-sep {
+      color: var(--muted);
+      font-weight: bold;
+      user-select: none;
+    }
+    .hora-reloj-btn {
+      background: transparent;
+      border: none;
+      color: var(--cyan);
+      cursor: pointer;
+      padding: 0.2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+    }
+    .hora-reloj-btn:hover {
+      background: rgba(0, 212, 255, 0.12);
+    }
+    .req-asterisco {
+      color: #ef4444;
+      font-weight: bold;
+    }
+    @media print {
+      body * { visibility: hidden; }
+      .area-impresion-activa, .area-impresion-activa * { visibility: visible; }
+      .area-impresion-activa {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+    <aside id="sidebar" class="sidebar no-print">
+      <div class="sidebar-header">
+        <div class="brand">
+          <img src="logo.png" alt="Logo" class="brand-img" />
+          <div class="hide-on-collapse">
+            <h1 style="font-size:0.9rem;">COMPURED</h1>
+            <span>Dirección General</span>
+          </div>
+        </div>
+        <button class="btn-toggle-sidebar" onclick="document.getElementById('sidebar').classList.toggle('colapsado')" title="Desplegar / Contraer menú">☰</button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <button class="menu-item active" onclick="cambiarTab('tabEstudiantes', this)">
+          <span class="menu-icon">🎓</span><span class="hide-on-collapse">Estudiantes</span>
+        </button>
+        <button class="menu-item" onclick="cambiarTab('tabPagos', this)">
+          <span class="menu-icon">💳</span><span class="hide-on-collapse">Pagos y Solvencia</span>
+        </button>
+        <button class="menu-item" onclick="cambiarTab('tabNotas', this)">
+          <span class="menu-icon">📊</span><span class="hide-on-collapse">Calificaciones</span>
+        </button>
+        <button class="menu-item" onclick="cambiarTab('tabGrupos', this)">
+          <span class="menu-icon">🗂️</span><span class="hide-on-collapse">Grupos y Tarifas</span>
+        </button>
+        <button class="menu-item" onclick="cambiarTab('tabDocentes', this)">
+          <span class="menu-icon">👨‍🏫</span><span class="hide-on-collapse">Docentes</span>
+        </button>
+        <button class="menu-item" onclick="cambiarTab('tabFinanzas', this)">
+          <span class="menu-icon">📈</span><span class="hide-on-collapse">Finanzas y Gastos</span>
+        </button>
+        <button class="menu-item" onclick="cambiarTab('tabBitacora', this)">
+          <span class="menu-icon">🛡️</span><span class="hide-on-collapse">Bitácora</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-outline btn-sm btn-block" onclick="abrirModalPassword()">
+          <span>🔑</span><span class="hide-on-collapse">Cambiar clave</span>
+        </button>
+        <button class="btn btn-danger btn-sm btn-block" onclick="cerrarSesion()">
+          <span>🚪</span><span class="hide-on-collapse">Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-workspace">
+      <header class="topbar no-print">
+        <div class="session-info">
+          <button class="btn-toggle-sidebar" onclick="document.getElementById('sidebar').classList.toggle('colapsado')">☰</button>
+          <strong id="lblUsuarioNombre">Director</strong>
+          <span class="badge badge-rol" id="lblUsuarioRol">Director</span>
+          <span class="badge badge-sede" id="lblUsuarioSede">Sede</span>
+        </div>
+
+        <div class="panel-actions">
+          <select id="filtroSedeDirector" style="width:auto;" onchange="cargarDatos()">
+            <option value="TODAS">Todas las Sedes</option>
+            <option value="San Juan Ostuncalco">San Juan Ostuncalco</option>
+            <option value="La Esperanza">La Esperanza</option>
+          </select>
+          <select id="selectCicloGlobal" style="width:auto;" onchange="cargarDatos()">
+            <option value="2025">Ciclo 2025</option>
+            <option value="2026" selected>Ciclo 2026</option>
+            <option value="2027">Ciclo 2027</option>
+            <option value="2028">Ciclo 2028</option>
+          </select>
+          <button class="btn btn-cyan btn-sm" onclick="agregarCicloEscolar()">+ Ciclo</button>
+        </div>
+      </header>
+
+      <main class="workspace-content">
+        <div id="tabEstudiantes" class="tab-panel card">
+          <div class="panel-header">
+            <h3>Estudiantes Inscritos (<span id="lblCicloTablaEst">2026</span>)</h3>
+            <div class="panel-actions">
+              <select id="filtroEstadoEst" style="width:auto;" onchange="filtrarEstudiantes()">
+                <option value="Activo" selected>Estado: Activos</option>
+                <option value="Pausado">Estado: Pausados</option>
+                <option value="Retirado">Estado: Retirados</option>
+                <option value="Graduado">Estado: Graduados</option>
+                <option value="TODOS">Todos los estados</option>
+              </select>
+              <select id="filtroGrupoEst" style="width:auto;" onchange="filtrarEstudiantes()">
+                <option value="TODOS">Todos los grupos</option>
+              </select>
+              <select id="filtroSolvenciaEst" style="width:auto;" onchange="filtrarEstudiantes()">
+                <option value="TODOS">Todos (Solvencia)</option>
+                <option value="SOLVENTES">Solo Solventes</option>
+                <option value="PENDIENTES">Con Pendientes</option>
+              </select>
+              <input type="text" id="buscadorEstudiantes" class="search-input" placeholder="Buscar nombre, código, MINEDUC, instituto..." oninput="filtrarEstudiantes()" />
+              <button class="btn btn-primary" onclick="abrirModalEstudiante()">+ Inscribir Estudiante</button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Código / MINEDUC</th><th>Estudiante</th><th>Sede / Aldea</th>
+                  <th>Curso y Grupo</th><th>Encargado / Tel.</th><th>Estado / Solvencia</th><th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyEstudiantes"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tabPagos" class="tab-panel card oculto">
+          <div class="panel-header">
+            <h3>Boletas Bancarias y Solvencia</h3>
+            <button class="btn btn-cyan" onclick="abrirModalPago()">+ Registrar Boleta Bancaria</button>
+          </div>
+          <h4 style="color:var(--cyan);margin-bottom:0.6rem;">Boletas en revisión</h4>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr><th>Estudiante</th><th>Sede</th><th>Mes</th><th>Monto</th><th>No. Depósito</th><th>Fecha y Hora</th><th>Archivo</th><th>Validar</th></tr>
+              </thead>
+              <tbody id="tbodyBoletasRevision"></tbody>
+            </table>
+          </div>
+          <h4 style="color:#f87171;margin:1.75rem 0 0.6rem;">Estudiantes activos con pagos pendientes</h4>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr><th>Estudiante</th><th>Sede</th><th>Curso</th><th>Encargado / Tel.</th><th>Pendientes</th><th>Deuda</th><th>Recordatorio</th></tr>
+              </thead>
+              <tbody id="tbodyInsolventes"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tabNotas" class="tab-panel card oculto">
+          <div class="panel-header">
+            <h3>Calificaciones (4 Unidades)</h3>
+            <div class="panel-actions">
+              <button class="btn btn-cyan btn-sm" onclick="abrirModalReglasUnidades()">⚙️ Meses por Unidad</button>
+              <input type="text" id="buscadorNotas" class="search-input" placeholder="Buscar estudiante por nombre o código..." oninput="renderizarNotas()" />
+              <select id="filtroGrupoNotas" style="width:auto;" onchange="renderizarNotas()"><option value="TODOS">Todos los grupos</option></select>
+            </div>
+          </div>
+
+          <div id="resumenReglasUnidades" style="margin-bottom:1rem;padding:0.75rem;border-radius:10px;background:rgba(0,212,255,0.06);border:1px solid var(--border);font-size:0.85rem;color:var(--muted);"></div>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr><th>Código</th><th>Estudiante</th><th>Grupo</th><th>U1</th><th>U2</th><th>U3</th><th>U4</th><th>Promedio</th><th>Estado</th><th>Guardar</th></tr>
+              </thead>
+              <tbody id="tbodyNotas"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tabGrupos" class="tab-panel card oculto">
+          <div class="panel-header">
+            <h3>Grupos, Horarios y Tarifas</h3>
+            <button class="btn btn-primary" onclick="abrirModalGrupo()">+ Crear Grupo</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr><th>Curso</th><th>Grupo</th><th>Sede</th><th>Días y Horario</th><th>Resumen Alumnos</th><th>Tarifas</th><th>Período</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="tbodyGrupos"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tabDocentes" class="tab-panel card oculto">
+          <div class="panel-header">
+            <h3>Docentes por Sede</h3>
+            <button class="btn btn-primary" onclick="abrirModalDocente()">+ Crear Docente</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead><tr><th>Código</th><th>Nombre</th><th>Rol</th><th>Sede</th><th>Estado</th></tr></thead>
+              <tbody id="tbodyDocentes"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tabFinanzas" class="tab-panel card oculto">
+          <div class="panel-header">
+            <h3>Finanzas y Contabilidad — Ciclo <span id="lblCicloFinanzas">2026</span></h3>
+            <div class="panel-actions">
+              <select id="filtroFinanzasSede" style="width:auto;" onchange="renderizarFinanzas()">
+                <option value="TODAS">Todas las Sedes</option>
+                <option value="San Juan Ostuncalco">San Juan Ostuncalco</option>
+                <option value="La Esperanza">La Esperanza</option>
+                <option value="General">Administración General</option>
+              </select>
+              <select id="filtroFinanzasGrupo" style="width:auto;" onchange="renderizarFinanzas()">
+                <option value="TODOS">Todos los Grupos</option>
+              </select>
+              <button class="btn btn-outline btn-sm" onclick="abrirModalGastosFijos()">Gastos Fijos</button>
+              <button class="btn btn-danger btn-sm" onclick="abrirModalGasto()">+ Registrar Gasto</button>
+            </div>
+          </div>
+
+          <div class="finance-cards">
+            <div class="card stat-card green"><span>Ingresos Bancarios Aprobados</span><h2 id="finIngresos">Q0.00</h2></div>
+            <div class="card stat-card red"><span>Gastos Registrados</span><h2 id="finGastos">Q0.00</h2></div>
+            <div class="card stat-card blue"><span>Balance Neto</span><h2 id="finBalance">Q0.00</h2></div>
+          </div>
+
+          <div class="card" style="margin-bottom:1.5rem;">
+            <h4 style="color:var(--cyan);margin-bottom:0.75rem;">Desglose por Sede en Ciclo <span id="lblCicloDesglose">2026</span></h4>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr><th>Sede</th><th>Ingresos (Q)</th><th>Gastos (Q)</th><th>Balance (Q)</th></tr>
+                </thead>
+                <tbody id="tbodyDesgloseSede"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card"><canvas id="graficaFinanzas" height="85"></canvas></div>
+
+          <h4 style="color:var(--cyan);margin:1.5rem 0 0.6rem;">Detalle de Gastos</h4>
+          <div class="table-responsive">
+            <table class="table">
+              <thead><tr><th>Fecha</th><th>Sede</th><th>Categoría</th><th>Descripción</th><th>Ref.</th><th>Monto</th><th>Acción</th></tr></thead>
+              <tbody id="tbodyGastos"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tabBitacora" class="tab-panel card oculto">
+          <h3 style="margin-bottom:1rem;">Bitácora de Auditoría</h3>
+          <div class="table-responsive">
+            <table class="table">
+              <thead><tr><th>Fecha/Hora</th><th>Usuario</th><th>Rol</th><th>Sede</th><th>Acción</th><th>Detalle</th></tr></thead>
+              <tbody id="tbodyBitacora"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIGURACIÓN DE MESES POR UNIDAD -->
+  <div id="modalReglasUnidades" class="modal oculto">
+    <div class="modal-content modal-lg">
+      <h3 style="color:var(--cyan);margin-bottom:0.4rem;">Configurar Solvencia para Mostrar Notas por Unidad</h3>
+      <p style="color:var(--muted);font-size:0.86rem;margin-bottom:1rem;">
+        Elige qué meses o conceptos debe tener aprobados el estudiante para desbloquear cada unidad en su portal.
+      </p>
+      <form onsubmit="guardarReglasUnidadesForm(event)">
+        <div class="form-grid" id="gridReglasUnidades"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="cerrarModales()">Cancelar</button>
+          <button type="submit" class="btn btn-cyan">Guardar Reglas de Unidades</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL INSCRIBIR / EDITAR ESTUDIANTE -->
+  <div id="modalEstudiante" class="modal oculto">
+    <div class="modal-content modal-lg">
+      <h3 id="tituloModalEst" style="color:var(--cyan);margin-bottom:1rem;">Inscribir Estudiante</h3>
+      <form onsubmit="guardarEstudianteForm(event)">
+        <input type="hidden" id="editEstId" />
+        <div class="form-grid">
+          <div class="form-group"><label>Primer Nombre *</label><input type="text" id="estP1" required /></div>
+          <div class="form-group"><label>Segundo Nombre</label><input type="text" id="estP2" /></div>
+          <div class="form-group"><label>Tercer Nombre</label><input type="text" id="estP3" /></div>
+          <div class="form-group"><label>Primer Apellido *</label><input type="text" id="estA1" required /></div>
+          <div class="form-group"><label>Segundo Apellido</label><input type="text" id="estA2" /></div>
+          <div class="form-group"><label>Fecha Nacimiento *</label><input type="date" id="estNac" required /></div>
+          <div class="form-group"><label>CUI / DPI (Opcional)</label><input type="text" id="estCui" placeholder="Ej. 3012 45678 0901" /></div>
+          <div class="form-group">
+            <label>Sede *</label>
+            <select id="estSede" onchange="actualizarGruposYAlertas()">
+              <option value="San Juan Ostuncalco">San Juan Ostuncalco</option>
+              <option value="La Esperanza">La Esperanza</option>
+            </select>
+          </div>
+          <div class="form-group" id="boxAldea">
+            <label>Aldea / Sector</label>
+            <select id="estAldea">
+              <option value="Cabecera Municipal">Cabecera Municipal</option><option value="La Victoria">La Victoria</option>
+              <option value="Monrovia">Monrovia</option><option value="Las Lagunas Cuaches">Las Lagunas Cuaches</option>
+              <option value="La Nueva Concepción">La Nueva Concepción</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Dirección *</label><input type="text" id="estDireccion" required /></div>
+          <div class="form-group"><label>Código MINEDUC (Opcional)</label><input type="text" id="estMineduc" placeholder="Ej. 09-04-0123-45" /></div>
+          <div class="form-group">
+            <label>Grado Actual (Opcional)</label>
+            <select id="estGrado">
+              <option value="">No aplica / Sin grado actual</option>
+              <option value="Primero Básico">Primero Básico</option>
+              <option value="Segundo Básico">Segundo Básico</option>
+              <option value="Tercero Básico">Tercero Básico</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Instituto / Establecimiento (Opcional)</label><input type="text" id="estInstituto" placeholder="Ej. INEB La Victoria" /></div>
+          <div class="form-group"><label>Grupo Asignado *</label><select id="estGrupoSelect" required></select></div>
+          <div class="form-group"><label>Tel. Estudiante</label><input type="tel" id="estTel" /></div>
+          <div class="form-group"><label>Nombre Encargado *</label><input type="text" id="estEncargado" required /></div>
+          <div class="form-group"><label>Tel. Encargado *</label><input type="tel" id="estTelEncargado" required /></div>
+          <div class="form-group"><label>Cuota Especial / Beca (Q)</label><input type="number" step="0.01" id="estCuotaEspecial" /></div>
+          <div class="form-group" id="boxEstadoEst">
+            <label>Estado del Estudiante</label>
+            <select id="estEstado">
+              <option value="Activo">Activo</option>
+              <option value="Pausado">Pausado</option>
+              <option value="Retirado">Retirado</option>
+              <option value="Graduado">Graduado</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="cerrarModales()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL BOLETA OFICIAL CONTROL DE PAGOS -->
+  <div id="modalCredenciales" class="modal oculto">
+    <div class="modal-content modal-lg" style="max-width:780px;">
+      <div id="areaImpresionBoleta">
+        <div class="boleta-oficial">
+          <div class="boleta-header">
+            <img src="logo.png" alt="Logo COMPURED" />
+            <div class="boleta-titulo-centro">
+              <h2>COMPURED</h2>
+              <p id="bolDireccionSede">Aldea La Victoria, San Juan Ostuncalco, Quetzaltenango.</p>
+              <p>Teléfono: 33834646 &nbsp;|&nbsp; Correo: compured0909@gmail.com</p>
+            </div>
+            <div style="text-align:right;min-width:110px;">
+              <span style="display:inline-block;background:#1e3a8a;color:#fff;padding:0.25rem 0.5rem;border-radius:4px;font-weight:bold;font-size:0.74rem;" id="bolCodigoTag">EST-2026-001</span>
+            </div>
+          </div>
+
+          <div class="boleta-banda">CONTROL DE PAGOS — CICLO ESCOLAR <span id="bolCiclo">2026</span></div>
+
+          <div class="boleta-datos-grid">
+            <table class="boleta-tabla">
+              <thead><tr><th colspan="2">DATOS DEL ESTUDIANTE</th></tr></thead>
+              <tbody>
+                <tr><td colspan="2" class="boleta-lbl">Apellidos y Nombres</td></tr>
+                <tr><td colspan="2"><strong id="credNombre"></strong></td></tr>
+                <tr>
+                  <td class="boleta-lbl" style="width:50%;">CUI</td>
+                  <td class="boleta-lbl" style="width:50%;">Código MINEDUC</td>
+                </tr>
+                <tr>
+                  <td id="credCui">-</td>
+                  <td id="credMineduc">-</td>
+                </tr>
+                <tr><td colspan="2" class="boleta-lbl">Curso y Grupo</td></tr>
+                <tr><td colspan="2"><strong id="credCursoGrupo"></strong></td></tr>
+              </tbody>
+            </table>
+
+            <table class="boleta-tabla">
+              <thead><tr><th colspan="2">DATOS DEL REPRESENTANTE</th></tr></thead>
+              <tbody>
+                <tr><td colspan="2" class="boleta-lbl">Apellidos y Nombres</td></tr>
+                <tr><td colspan="2"><strong id="credEncargado"></strong></td></tr>
+                <tr><td colspan="2" class="boleta-lbl">Dirección</td></tr>
+                <tr><td colspan="2" id="credDireccion"></td></tr>
+                <tr>
+                  <td class="boleta-lbl" style="width:50%;">Celular Estudiante</td>
+                  <td class="boleta-lbl" style="width:50%;">Teléfono Emergencia</td>
+                </tr>
+                <tr>
+                  <td id="credTelEst">-</td>
+                  <td id="credTelEnc">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="boleta-meses-grid" id="bolCuadrosMeses"></div>
+
+          <div class="boleta-nota">
+            <strong>NOTA:</strong>
+            <ul>
+              <li>Los pagos deberán ser cancelados en el número de cuenta <strong>Banrural: 4296326081</strong> a nombre de <strong>Brayan Isaú Romero Pérez</strong>.</li>
+              <li>Las mensualidades deberán ser canceladas los primeros 10 días de cada mes.</li>
+              <li>Este control debe ser presentado al momento de cancelar.</li>
+              <li>El no cumplir con el pago, en el lapso de tiempo estipulado, deberá cancelar una mora de <strong>Q. 20.00</strong> por pago extemporáneo.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer no-print">
+        <button class="btn btn-cyan" onclick="imprimirElementoPorId('areaImpresionBoleta')">🖨️ Imprimir / Descargar Boleta PDF</button>
+        <button class="btn btn-outline" onclick="cerrarModales()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CREDENCIALES SEPARADO -->
+  <div id="modalSoloCredenciales" class="modal oculto">
+    <div class="modal-content">
+      <div id="areaImpresionCredenciales" class="ticket-box">
+        <h3 style="color:var(--cyan);">COMPURED &amp; Compucenter</h3>
+        <p><strong>Credenciales de Acceso al Portal Estudiantil</strong></p>
+        <hr style="margin:0.6rem 0;border-color:var(--border);" />
+        <p><strong>Estudiante:</strong> <span id="soloCredNombre"></span></p>
+        <p><strong>Sede:</strong> <span id="soloCredSede"></span></p>
+        <p><strong>Curso / Grupo:</strong> <span id="soloCredCurso"></span></p>
+        <div class="cred-highlight">
+          <p>Usuario: <strong id="soloCredUsuario" style="color:var(--cyan);"></strong></p>
+          <p>Contraseña: <strong id="soloCredPass" style="color:var(--cyan);"></strong></p>
+        </div>
+      </div>
+      <div class="modal-footer no-print">
+        <button class="btn btn-cyan" onclick="imprimirElementoPorId('areaImpresionCredenciales')">🖨️ Imprimir Credenciales</button>
+        <button class="btn btn-outline" onclick="cerrarModales()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL GRUPO -->
+  <div id="modalGrupo" class="modal oculto">
+    <div class="modal-content">
+      <h3 style="color:var(--cyan);margin-bottom:1rem;">Configurar Grupo y Tarifas</h3>
+      <form onsubmit="guardarGrupoForm(event)">
+        <input type="hidden" id="grpId" />
+        <div class="form-group">
+          <label>Curso *</label>
+          <select id="grpCurso">
+            <option>Mecanografía</option><option>Técnico Operador de Computadoras</option>
+            <option>Técnico en Diseño Gráfico Computarizado</option><option>Técnico en Reparación de Computadoras</option>
+            <option>Técnico Programador</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Nombre Grupo *</label><input type="text" id="grpNombre" required /></div>
+        <div class="form-group"><label>Sede *</label><select id="grpSede"><option>San Juan Ostuncalco</option><option>La Esperanza</option></select></div>
+        <div class="form-grid">
+          <div class="form-group"><label>Días *</label><input type="text" id="grpDias" required /></div>
+          <div class="form-group"><label>Horario *</label><input type="text" id="grpHorario" required /></div>
+          <div class="form-group"><label>Inscripción (Q) *</label><input type="number" step="0.01" id="grpInscripcion" required /></div>
+          <div class="form-group"><label>Mensualidad (Q) *</label><input type="number" step="0.01" id="grpMensualidad" required /></div>
+          <div class="form-group"><label>Mes Inicio *</label><select id="grpMesInicio"><option>Enero</option><option selected>Febrero</option><option>Marzo</option><option>Abril</option></select></div>
+          <div class="form-group"><label>Mes Fin *</label><select id="grpMesFin"><option>Septiembre</option><option>Octubre</option><option selected>Noviembre</option><option>Diciembre</option></select></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="cerrarModales()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Grupo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DOCENTE -->
+  <div id="modalDocente" class="modal oculto">
+    <div class="modal-content">
+      <h3 style="color:var(--cyan);margin-bottom:1rem;">Crear Docente</h3>
+      <form onsubmit="guardarDocenteForm(event)">
+        <div class="form-group"><label>Nombre Completo *</label><input type="text" id="docNombre" required /></div>
+        <div class="form-group"><label>Sede Asignada *</label><select id="docSede"><option>San Juan Ostuncalco</option><option>La Esperanza</option></select></div>
+        <div class="form-group"><label>Código Acceso (Opcional)</label><input type="text" id="docCodigo" /></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="cerrarModales()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Crear Docente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL PAGO DIRECTOR -->
+  <div id="modalPago" class="modal oculto">
+    <div class="modal-content">
+      <h3 style="color:var(--cyan);margin-bottom:1rem;">Registrar Boleta Bancaria (Aprobación Directa)</h3>
+      <form onsubmit="guardarPagoForm(event)">
+        <div class="form-group">
+          <label>Buscar Estudiante (Nombre, Código o MINEDUC)</label>
+          <input type="text" id="buscarEstPago" placeholder="Escriba para buscar al estudiante..." oninput="filtrarEstudiantesPago()" />
+        </div>
+        <div class="form-group">
+          <label>Estudiante *</label>
+          <select id="pagoEstSelect" onchange="refrescarConceptosAdmin()" required></select>
+        </div>
+        <div class="form-group">
+          <label>Meses o Conceptos Pendientes *</label>
+          <div id="listaConceptosAdmin" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:0.45rem;background:rgba(5,8,17,0.75);border:1px solid var(--border);padding:0.7rem;border-radius:10px;"></div>
+        </div>
+        <div class="form-group"><label>Número de Depósito / Boleta *</label><input type="text" id="pagoNumBoleta" required /></div>
+        <div class="form-group"><label>Fecha del Depósito *</label><input type="date" id="pagoFecha" required /></div>
+        <div class="form-group">
+          <label>Hora del depósito: <span class="req-asterisco">*</span></label>
+          <div class="hora-deposito-box">
+            <div class="hora-deposito-campos">
+              <select id="pagoHoraH" aria-label="Hora"></select>
+              <span class="hora-sep">:</span>
+              <select id="pagoHoraM" aria-label="Minutos"></select>
+              <span class="hora-sep">:</span>
+              <select id="pagoHoraS" aria-label="Segundos"></select>
+              <select id="pagoHoraAP" aria-label="AM o PM"></select>
+            </div>
+            <button type="button" class="hora-reloj-btn" onclick="establecerHoraActual12('pagoHoraH','pagoHoraM','pagoHoraS','pagoHoraAP')" title="Usar hora actual">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"></circle>
+                <polyline points="12 7 12 12 15.5 14"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="form-group"><label>Valor del Depósito (Q) *</label><input type="number" step="0.01" id="pagoMonto" required /></div>
+        <div class="form-group"><label>Comprobante (Opcional)</label><input type="file" id="pagoArchivo" accept="image/*,.pdf" /></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="cerrarModales()">Cancelar</button>
+          <button type="submit" class="btn btn-cyan">Registrar y Aprobar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL GASTO -->
+  <div id="modalGasto" class="modal oculto">
+    <div class="modal-content">
+      <h3 style="color:var(--cyan);margin-bottom:1rem;">Registrar Gasto</h3>
+      <form onsubmit="guardarGastoForm(event)">
+        <div class="form-group"><label>Sede *</label><select id="gastoSede"><option>San Juan Ostuncalco</option><option>La Esperanza</option><option>General</option></select></div>
+        <div class="form-group"><label>Categoría *</label><select id="gastoCat"><option>Alquiler</option><option>Salarios</option><option>Servicios</option><option>Mantenimiento</option><option>Papelería</option><option>Otros</option></select></div>
+        <div class="form-group"><label>Descripción *</label><input type="text" id="gastoDesc" required /></div>
+        <div class="form-group"><label>Monto (Q) *</label><input type="number" step="0.01" id="gastoMonto" required /></div>
+        <div class="form-group"><label>No. Referencia</label><input type="text" id="gastoRef" /></div>
+        <div class="form-group"><label>Fecha *</label><input type="date" id="gastoFecha" required /></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="cerrarModales()">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Guardar Gasto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL GASTOS FIJOS -->
+  <div id="modalGastosFijos" class="modal oculto">
+    <div class="modal-content modal-lg">
+      <div class="panel-header">
+        <h3 style="color:var(--cyan);">Gastos Fijos Recurrentes</h3>
+        <button class="btn btn-cyan btn-sm" onclick="aplicarGastosFijosAhora()">Aplicar Fijos al Ciclo Actual</button>
+      </div>
+      <form onsubmit="guardarGastoFijoForm(event)" class="form-grid" style="margin-bottom:1rem;">
+        <div class="form-group"><label>Sede *</label><select id="fijoSede"><option>San Juan Ostuncalco</option><option>La Esperanza</option><option>General</option></select></div>
+        <div class="form-group"><label>Categoría *</label><select id="fijoCat"><option>Alquiler</option><option>Salarios</option><option>Servicios</option><option>Mantenimiento</option><option>Otros</option></select></div>
+        <div class="form-group"><label>Descripción *</label><input type="text" id="fijoDesc" placeholder="Ej. Alquiler mensual" required /></div>
+        <div class="form-group"><label>Monto (Q) *</label><input type="number" step="0.01" id="fijoMonto" required /></div>
+        <div class="form-group" style="display:flex;align-items:flex-end;">
+          <button type="submit" class="btn btn-primary btn-block">+ Agregar Gasto Fijo</button>
+        </div>
+      </form>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Sede</th><th>Categoría</th><th>Descripción</th><th>Monto</th></tr></thead>
+          <tbody id="tbodyGastosFijos"></tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="cerrarModales()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PASSWORD -->
+  <div id="modalPassword" class="modal oculto">
+    <div class="modal-content">
+      <h3 style="color:var(--cyan);margin-bottom:1rem;">Cambiar Mi Contraseña</h3>
+      <form onsubmit="cambiarPasswordForm(event)">
+        <div class="form-group"><label>Nueva Contraseña *</label><input type="password" id="inputNuevaClave" minlength="4" required /></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="cerrarModales()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="loader" class="loader oculto"><div class="spinner"></div><p>Sincronizando...</p></div>
+
+  <script src="api.js"></script>
+  <script>
+    const sesion = exigirRol("Director");
+    let datos = { ciclos: [], reglasUnidades: {}, gastosFijos: [], grupos: [], estudiantes: [], pagos: [], notas: [], gastos: [], usuarios: [], bitacora: [] };
+    let grafica = null;
+
+    const CONCEPTOS_UNIDADES = [
+      "Inscripción", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+
+    const CUADROS_BOLETA = [
+      "INSCRIPCIÓN", "FEBRERO", "MARZO", "ABRIL",
+      "MAYO", "JUNIO", "JULIO", "AGOSTO",
+      "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "SOLVENCIA"
+    ];
+
+    if (sesion) cargarDatos();
+
+    function llenarSelectoresHora12(idHora, idMin, idSeg, idAmp) {
+      const selH = document.getElementById(idHora);
+      const selM = document.getElementById(idMin);
+      const selS = document.getElementById(idSeg);
+      const selA = document.getElementById(idAmp);
+      if (!selH || !selM || !selS || !selA) return;
+
+      selH.innerHTML = `<option value="">--</option>` + Array.from({ length: 12 }, (_, idx) => {
+        const val = String(idx + 1).padStart(2, "0");
+        return `<option value="${val}">${val}</option>`;
+      }).join("");
+
+      const opts60 = `<option value="">--</option>` + Array.from({ length: 60 }, (_, idx) => {
+        const val = String(idx).padStart(2, "0");
+        return `<option value="${val}">${val}</option>`;
+      }).join("");
+
+      selM.innerHTML = opts60;
+      selS.innerHTML = opts60;
+      selA.innerHTML = `<option value="">--</option><option value="AM">AM</option><option value="PM">PM</option>`;
+
+      selH.value = "";
+      selM.value = "";
+      selS.value = "";
+      selA.value = "";
+    }
+
+    function establecerHoraActual12(idHora, idMin, idSeg, idAmp) {
+      const ahora = new Date();
+      let h24 = ahora.getHours();
+      const ampm = h24 >= 12 ? "PM" : "AM";
+      let h12 = h24 % 12;
+      if (h12 === 0) h12 = 12;
+      document.getElementById(idHora).value = String(h12).padStart(2, "0");
+      document.getElementById(idMin).value = String(ahora.getMinutes()).padStart(2, "0");
+      document.getElementById(idSeg).value = String(ahora.getSeconds()).padStart(2, "0");
+      document.getElementById(idAmp).value = ampm;
+    }
+
+    function obtenerHora12Seleccionada(idHora, idMin, idSeg, idAmp) {
+      const h = document.getElementById(idHora).value;
+      const m = document.getElementById(idMin).value;
+      const s = document.getElementById(idSeg).value;
+      const amp = document.getElementById(idAmp).value;
+      if (!h || !m || !s || !amp) {
+        throw new Error("Seleccione hora, minutos, segundos y AM/PM en la hora del depósito.");
+      }
+      return `${h}:${m}:${s} ${amp}`;
+    }
+
+    function imprimirElementoPorId(id) {
+      document.querySelectorAll(".area-impresion-activa").forEach(el => el.classList.remove("area-impresion-activa"));
+      const target = document.getElementById(id);
+      if (target) target.classList.add("area-impresion-activa");
+      window.print();
+    }
+
+    function cambiarTab(id, btn) {
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("oculto"));
+      document.querySelectorAll(".menu-item").forEach(b => b.classList.remove("active"));
+      document.getElementById(id).classList.remove("oculto");
+      btn.classList.add("active");
+    }
+
+    function sincronizarSelectCiclos(listaCiclos) {
+      if (!listaCiclos || !listaCiclos.length) return;
+      const sel = document.getElementById("selectCicloGlobal");
+      const actual = sel.value;
+      sel.innerHTML = listaCiclos.map(c => `<option value="${c}">Ciclo ${c}</option>`).join("");
+      sel.value = listaCiclos.includes(actual) ? actual : listaCiclos[listaCiclos.length - 1];
+      document.getElementById("lblCicloTablaEst").textContent = sel.value;
+      document.getElementById("lblCicloFinanzas").textContent = sel.value;
+      document.getElementById("lblCicloDesglose").textContent = sel.value;
+    }
+
+    async function agregarCicloEscolar() {
+      const anio = prompt("Ingrese el nuevo ciclo escolar (ej. 2029):");
+      if (!anio) return;
+      try {
+        const res = await llamarAPI("guardarCiclo", { ciclo: anio.trim() });
+        sincronizarSelectCiclos(res.ciclos);
+        document.getElementById("selectCicloGlobal").value = res.cicloAgregado;
+        cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    async function cargarDatos() {
+      try {
+        const cicloSel = document.getElementById("selectCicloGlobal").value;
+        datos = await llamarAPI("obtenerDashboard", {
+          ciclo: cicloSel,
+          sedeFiltro: document.getElementById("filtroSedeDirector").value
+        });
+        sincronizarSelectCiclos(datos.ciclos);
+        poblarFiltroGruposEst();
+        renderizarEstudiantes(); renderizarPagos(); renderizarNotas();
+        renderizarGrupos(); renderizarDocentes(); renderizarFinanzas(); renderizarBitacora();
+      } catch (err) { alert(err.message); }
+    }
+
+    function poblarFiltroGruposEst() {
+      const sel = document.getElementById("filtroGrupoEst");
+      if (!sel) return;
+      const actual = sel.value;
+      sel.innerHTML = `<option value="TODOS">Todos los grupos</option>` +
+        datos.grupos.map(g => `<option value="${g.id_grupo}">${g.curso} - ${g.nombre_grupo}</option>`).join("");
+      if ([...sel.options].some(o => o.value === actual)) sel.value = actual;
+    }
+
+    function abrirModalReglasUnidades() {
+      const reglas = datos.reglasUnidades || {};
+      const grid = document.getElementById("gridReglasUnidades");
+      grid.innerHTML = [1, 2, 3, 4].map(u => {
+        const activos = Array.isArray(reglas[String(u)]) ? reglas[String(u)] : [];
+        const checks = CONCEPTOS_UNIDADES.map(m => `
+          <label style="display:flex;align-items:center;gap:0.4rem;color:var(--white);font-size:0.82rem;cursor:pointer;">
+            <input type="checkbox" class="chk-regla-u${u}" value="${m}" ${activos.includes(m) ? "checked" : ""} style="width:auto;" />
+            <span>${m}</span>
+          </label>
+        `).join("");
+        return `
+          <div class="card" style="padding:1rem;">
+            <h4 style="color:var(--cyan);margin-bottom:0.5rem;">Unidad ${u}</h4>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(100px,1fr));gap:0.35rem;">${checks}</div>
+          </div>
+        `;
+      }).join("");
+      document.getElementById("modalReglasUnidades").classList.remove("oculto");
+    }
+
+    async function guardarReglasUnidadesForm(e) {
+      e.preventDefault();
+      const nuevasReglas = {};
+      [1, 2, 3, 4].forEach(u => {
+        nuevasReglas[String(u)] = [...document.querySelectorAll(`.chk-regla-u${u}:checked`)].map(c => c.value);
+      });
+      try {
+        const res = await llamarAPI("guardarReglasUnidades", { reglas: nuevasReglas });
+        datos.reglasUnidades = res.reglasUnidades;
+        alert(res.mensaje);
+        cerrarModales();
+        renderizarNotas();
+      } catch (err) { alert(err.message); }
+    }
+
+    function formatearResumenPendientes(pendientes = []) {
+      if (!pendientes.length) return "";
+      const muestra = pendientes.slice(0, 2).join(", ");
+      const resto = pendientes.length - 2;
+      return resto > 0 ? `${muestra} (+${resto} más)` : muestra;
+    }
+
+    function renderizarEstudiantes() {
+      document.getElementById("tbodyEstudiantes").innerHTML = datos.estudiantes.map(e => {
+        const estadoActual = String(e.estado || "Activo").trim();
+        const mineducTxt = String(e.codigo_mineduc || "").trim() || "No registrado";
+        const instTxt = String(e.instituto || "").trim();
+        const subInfo = [e.grado_actual, instTxt].filter(Boolean).join(" • ");
+        const estadoSol = e.solvencia.solvente ? "SOLVENTES" : "PENDIENTES";
+        const listaPend = e.solvencia.pendientes || [];
+        const resumenCorto = formatearResumenPendientes(listaPend);
+        const detalleCompleto = listaPend.join(", ");
+
+        return `
+        <tr data-solvencia="${estadoSol}" data-estado="${estadoActual}" data-grupo="${e.id_grupo}">
+          <td><strong>${e.codigo_estudiante}</strong><br><small style="color:var(--muted);">MINEDUC: ${mineducTxt}</small></td>
+          <td>${e.nombre_completo}${subInfo ? `<br><small style="color:var(--muted);">${subInfo}</small>` : ""}</td>
+          <td>${e.sede}<br><small style="color:var(--muted);">${e.aldea_sector || ""}</small></td>
+          <td><strong>${e.curso}</strong><br><small style="color:var(--cyan);">${e.nombre_grupo}</small></td>
+          <td>${e.nombre_encargado}<br><small style="color:var(--muted);">${e.telefono_encargado}</small></td>
+          <td>
+            <select onchange='cambiarEstadoEstRapido("${e.id_estudiante}", this.value)' style="width:auto;padding:0.2rem 0.4rem;font-size:0.78rem;margin-bottom:0.25rem;">
+              <option value="Activo" ${estadoActual === "Activo" ? "selected" : ""}>Activo</option>
+              <option value="Pausado" ${estadoActual === "Pausado" ? "selected" : ""}>Pausado</option>
+              <option value="Retirado" ${estadoActual === "Retirado" ? "selected" : ""}>Retirado</option>
+              <option value="Graduado" ${estadoActual === "Graduado" ? "selected" : ""}>Graduado</option>
+            </select><br>
+            ${estadoActual !== "Activo"
+              ? `<span class="badge badge-rol">${estadoActual}</span>`
+              : (e.solvencia.solvente
+                  ? '<span class="badge badge-green">Solvente</span>'
+                  : `<span class="badge badge-red">Pendiente (${listaPend.length})</span><span class="solvencia-resumen" title="Pendientes: ${detalleCompleto}">${resumenCorto}</span>`)}
+          </td>
+          <td>
+            <div class="acciones-grid">
+              <button class="btn btn-outline btn-sm" onclick='verCredencialesExistentes("${e.id_estudiante}")'>Boleta</button>
+              <button class="btn btn-cyan btn-sm" onclick='verSoloCredenciales("${e.id_estudiante}")'>🔑 Claves</button>
+              <button class="btn btn-outline btn-sm" onclick='editarEstudiante("${e.id_estudiante}")'>Editar</button>
+              <button class="btn btn-danger btn-sm" onclick='borrarEstudiante("${e.id_estudiante}", "${e.nombre_completo}")'>Eliminar</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join("");
+      filtrarEstudiantes();
+    }
+
+    async function cambiarEstadoEstRapido(id_estudiante, nuevo_estado) {
+      try {
+        await llamarAPI("cambiarEstadoEstudiante", { id_estudiante, nuevo_estado });
+        cargarDatos();
+      } catch (err) { alert(err.message); cargarDatos(); }
+    }
+
+    function pintarBoletaControlOficial(info) {
+      document.getElementById("bolCiclo").textContent = info.ciclo || document.getElementById("selectCicloGlobal").value;
+      document.getElementById("bolCodigoTag").textContent = info.codigo || "";
+      document.getElementById("bolDireccionSede").textContent = info.sede === "La Esperanza"
+        ? "Sede La Esperanza, Quetzaltenango."
+        : "Aldea La Victoria, San Juan Ostuncalco, Quetzaltenango.";
+
+      document.getElementById("credNombre").textContent = info.apellidos_nombres || info.nombre || "";
+      document.getElementById("credCui").textContent = info.cui || "________________";
+      document.getElementById("credMineduc").textContent = info.mineduc || "No registrado";
+      document.getElementById("credCursoGrupo").textContent = info.cursoGrupo || `${info.curso || ""} (${info.grupo || ""})`;
+
+      document.getElementById("credEncargado").textContent = info.nombre_encargado || "";
+      document.getElementById("credDireccion").textContent = info.direccion || "";
+      document.getElementById("credTelEst").textContent = info.telefono_estudiante || "________";
+      document.getElementById("credTelEnc").textContent = info.telefono_encargado || "________";
+
+      const pagosEst = info.pagos || [];
+      document.getElementById("bolCuadrosMeses").innerHTML = CUADROS_BOLETA.map(titulo => {
+        const pagoEncontrado = pagosEst.find(p =>
+          String(p.mes_correspondiente).trim().toUpperCase() === titulo &&
+          String(p.estado_pago).trim() === "Pagado"
+        );
+        const fechaTxt = pagoEncontrado ? String(pagoEncontrado.fecha_deposito).slice(0, 10) : "____/____/_____";
+        const reciboTxt = pagoEncontrado ? `#${pagoEncontrado.numero_boleta}` : "________";
+        return `
+          <div class="boleta-mes-card">
+            <strong>${titulo}</strong>
+            <span>Fecha de Pago<br><b>${fechaTxt}</b></span>
+            <span>Recibo No. <b>${reciboTxt}</b></span>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("modalCredenciales").classList.remove("oculto");
+    }
+
+    function verCredencialesExistentes(id) {
+      const e = datos.estudiantes.find(x => x.id_estudiante === id);
+      if (!e) return;
+      const pagosEst = datos.pagos.filter(p => String(p.id_estudiante) === String(e.id_estudiante));
+      const apellidosNombres = `${e.primer_apellido || ""} ${e.segundo_apellido || ""}, ${e.primer_nombre || ""} ${e.segundo_nombre || ""} ${e.tercer_nombre || ""}`.replace(/\s+/g, " ").trim();
+      pintarBoletaControlOficial({
+        ciclo: e.ciclo_escolar,
+        codigo: e.codigo_estudiante,
+        sede: e.sede,
+        apellidos_nombres: apellidosNombres,
+        cui: String(e.cui || "").trim(),
+        mineduc: String(e.codigo_mineduc || "").trim() || "No registrado",
+        cursoGrupo: `${e.curso} (${e.nombre_grupo})`,
+        nombre_encargado: e.nombre_encargado,
+        direccion: e.direccion,
+        telefono_estudiante: e.telefono_estudiante,
+        telefono_encargado: e.telefono_encargado,
+        pagos: pagosEst
+      });
+    }
+
+    function verSoloCredenciales(id) {
+      const e = datos.estudiantes.find(x => x.id_estudiante === id);
+      if (!e) return;
+      document.getElementById("soloCredNombre").textContent = e.nombre_completo;
+      document.getElementById("soloCredSede").textContent = e.sede;
+      document.getElementById("soloCredCurso").textContent = `${e.curso} (${e.nombre_grupo})`;
+      document.getElementById("soloCredUsuario").textContent = e.codigo_estudiante;
+      document.getElementById("soloCredPass").textContent = e.password;
+      document.getElementById("modalSoloCredenciales").classList.remove("oculto");
+    }
+
+    async function borrarEstudiante(id_estudiante, nombre) {
+      if (!confirm(`¿Seguro que deseas eliminar al estudiante ${nombre}?`)) return;
+      try {
+        alert(await llamarAPI("eliminarEstudiante", { id_estudiante }));
+        cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    function filtrarEstudiantes() {
+      const q = document.getElementById("buscadorEstudiantes").value.toLowerCase();
+      const filtroSol = document.getElementById("filtroSolvenciaEst")?.value || "TODOS";
+      const filtroEst = document.getElementById("filtroEstadoEst")?.value || "Activo";
+      const filtroGrp = document.getElementById("filtroGrupoEst")?.value || "TODOS";
+      document.querySelectorAll("#tbodyEstudiantes tr").forEach(tr => {
+        const coincideTexto = tr.textContent.toLowerCase().includes(q);
+        const coincideSol = filtroSol === "TODOS" || tr.dataset.solvencia === filtroSol;
+        const coincideEstado = filtroEst === "TODOS" || tr.dataset.estado === filtroEst;
+        const coincideGrupo = filtroGrp === "TODOS" || tr.dataset.grupo === filtroGrp;
+        tr.style.display = (coincideTexto && coincideSol && coincideEstado && coincideGrupo) ? "" : "none";
+      });
+    }
+
+    function actualizarGruposYAlertas() {
+      const sede = document.getElementById("estSede").value;
+      document.getElementById("boxAldea").classList.toggle("oculto", sede !== "San Juan Ostuncalco");
+      const lista = datos.grupos.filter(g => g.sede === sede && g.activo === "Activo");
+      document.getElementById("estGrupoSelect").innerHTML = lista.length
+        ? lista.map(g => `<option value="${g.id_grupo}">${g.curso} - ${g.nombre_grupo} (${g.dias} ${g.horario})</option>`).join("")
+        : `<option value="">Sin grupos activos en esta sede</option>`;
+    }
+
+    function abrirModalEstudiante(e = null) {
+      document.getElementById("modalEstudiante").classList.remove("oculto");
+      if (e) {
+        document.getElementById("tituloModalEst").textContent = "Editar Estudiante";
+        document.getElementById("editEstId").value = e.id_estudiante;
+        document.getElementById("estP1").value = e.primer_nombre; document.getElementById("estP2").value = e.segundo_nombre;
+        document.getElementById("estP3").value = e.tercer_nombre; document.getElementById("estA1").value = e.primer_apellido;
+        document.getElementById("estA2").value = e.segundo_apellido; document.getElementById("estNac").value = String(e.fecha_nacimiento || "").slice(0, 10);
+        document.getElementById("estCui").value = e.cui || "";
+        document.getElementById("estSede").value = e.sede; actualizarGruposYAlertas();
+        document.getElementById("estAldea").value = e.aldea_sector || "Cabecera Municipal"; document.getElementById("estDireccion").value = e.direccion;
+        document.getElementById("estMineduc").value = e.codigo_mineduc || ""; document.getElementById("estGrado").value = e.grado_actual || "";
+        document.getElementById("estInstituto").value = e.instituto || "";
+        document.getElementById("estGrupoSelect").value = e.id_grupo; document.getElementById("estTel").value = e.telefono_estudiante;
+        document.getElementById("estEncargado").value = e.nombre_encargado; document.getElementById("estTelEncargado").value = e.telefono_encargado;
+        document.getElementById("estCuotaEspecial").value = e.cuota_especial;
+        document.getElementById("estEstado").value = e.estado || "Activo";
+      } else {
+        document.getElementById("tituloModalEst").textContent = "Inscribir Estudiante";
+        document.getElementById("editEstId").value = ""; document.querySelector("#modalEstudiante form").reset();
+        document.getElementById("estGrado").value = "";
+        document.getElementById("estEstado").value = "Activo";
+        actualizarGruposYAlertas();
+      }
+    }
+
+    function editarEstudiante(id) { const est = datos.estudiantes.find(x => x.id_estudiante === id); if (est) abrirModalEstudiante(est); }
+
+    async function guardarEstudianteForm(e) {
+      e.preventDefault();
+      try {
+        const res = await llamarAPI("guardarEstudiante", {
+          id_estudiante: document.getElementById("editEstId").value, ciclo_escolar: document.getElementById("selectCicloGlobal").value,
+          sede: document.getElementById("estSede").value, aldea_sector: document.getElementById("estAldea").value,
+          id_grupo: document.getElementById("estGrupoSelect").value, primer_nombre: document.getElementById("estP1").value,
+          segundo_nombre: document.getElementById("estP2").value, tercer_nombre: document.getElementById("estP3").value,
+          primer_apellido: document.getElementById("estA1").value, segundo_apellido: document.getElementById("estA2").value,
+          fecha_nacimiento: document.getElementById("estNac").value, cui: document.getElementById("estCui").value,
+          direccion: document.getElementById("estDireccion").value,
+          codigo_mineduc: document.getElementById("estMineduc").value, grado_actual: document.getElementById("estGrado").value,
+          instituto: document.getElementById("estInstituto").value,
+          telefono_estudiante: document.getElementById("estTel").value, nombre_encargado: document.getElementById("estEncargado").value,
+          telefono_encargado: document.getElementById("estTelEncargado").value, cuota_especial: document.getElementById("estCuotaEspecial").value,
+          estado: document.getElementById("estEstado").value
+        });
+        cerrarModales(); await cargarDatos();
+        if (res.codigo) {
+          pintarBoletaControlOficial({
+            ciclo: res.ciclo_escolar,
+            codigo: res.codigo,
+            sede: res.sede,
+            apellidos_nombres: res.apellidos_nombres || res.nombre,
+            cui: res.cui,
+            mineduc: res.mineduc || "No registrado",
+            cursoGrupo: `${res.curso} (${res.grupo})`,
+            nombre_encargado: res.nombre_encargado,
+            direccion: res.direccion,
+            telefono_estudiante: res.telefono_estudiante,
+            telefono_encargado: res.telefono_encargado,
+            pagos: []
+          });
+        } else alert(res.mensaje);
+      } catch (err) { alert(err.message); }
+    }
+
+    function renderizarPagos() {
+      const rev = datos.pagos.filter(p => p.estado_pago === "En revisión");
+      document.getElementById("tbodyBoletasRevision").innerHTML = rev.length ? rev.map(p => {
+        const est = datos.estudiantes.find(e => e.id_estudiante === p.id_estudiante) || {};
+        const tel = String(est.telefono_estudiante || est.telefono_encargado || "").replace(/\D/g, "");
+        const fechaTxt = String(p.fecha_deposito || "").slice(0, 10);
+        const horaTxt = p.hora_deposito ? `<br><small style="color:var(--cyan);">${p.hora_deposito}</small>` : "";
+        const msgAprob = `Hola ${est.nombre_completo || "estudiante"}, tu depósito #${p.numero_boleta} correspondiente a ${p.mes_correspondiente} (Q${Number(p.monto).toFixed(2)}) fue APROBADO en COMPURED y Compucenter.`;
+        const msgRech = `Hola ${est.nombre_completo || "estudiante"}, te informamos que tu depósito #${p.numero_boleta} correspondiente a ${p.mes_correspondiente} fue RECHAZADO en revisión. Por favor comunícate con dirección o sube nuevamente la boleta correcta.`;
+        const waAprob = tel ? `<a href="https://wa.me/502${tel}?text=${encodeURIComponent(msgAprob)}" target="_blank" class="btn btn-outline btn-sm" title="Enviar aviso de aprobación">WA Aprob.</a>` : "";
+        const waRech = tel ? `<a href="https://wa.me/502${tel}?text=${encodeURIComponent(msgRech)}" target="_blank" class="btn btn-outline btn-sm" title="Enviar aviso de rechazo">WA Rech.</a>` : "";
+
+        return `<tr>
+          <td>${est.nombre_completo || p.id_estudiante}</td><td>${p.sede}</td><td>${p.mes_correspondiente}</td>
+          <td>Q${Number(p.monto).toFixed(2)}</td><td>#${p.numero_boleta}</td><td>${fechaTxt}${horaTxt}</td>
+          <td>${p.url_comprobante && String(p.url_comprobante).startsWith("http") ? `<a href="${p.url_comprobante}" target="_blank" style="color:var(--cyan);">Ver boleta</a>` : "-"}</td>
+          <td>
+            <div style="display:flex;flex-wrap:wrap;gap:0.25rem;">
+              <button class="btn btn-success btn-sm" onclick='validarBoleta("${p.id_pago}","Pagado")'>Aprobar</button>
+              <button class="btn btn-danger btn-sm" onclick='validarBoleta("${p.id_pago}","Rechazado")'>Rechazar</button>
+              ${waAprob}
+              ${waRech}
+            </div>
+          </td></tr>`;
+      }).join("") : `<tr><td colspan="8">No hay boletas en revisión.</td></tr>`;
+
+      const ins = datos.estudiantes.filter(e => String(e.estado || "Activo") === "Activo" && e.solvencia.pendientes.length > 0);
+      document.getElementById("tbodyInsolventes").innerHTML = ins.length ? ins.map(e => {
+        const tel = String(e.telefono_encargado || "").replace(/\D/g, "");
+        const deudaFmt = Number(e.solvencia.deudaTotal || 0).toFixed(2);
+        const msg = `Estimado(a) ${e.nombre_encargado}, le saludamos de COMPURED y Compucenter (${e.sede}). El estudiante ${e.nombre_completo} tiene pendiente: ${e.solvencia.pendientes.join(", ")} (Q${deudaFmt}).`;
+        return `<tr>
+          <td>${e.nombre_completo}</td><td>${e.sede}</td><td>${e.curso}</td>
+          <td>${e.nombre_encargado} (${e.telefono_encargado})</td>
+          <td><span class="badge badge-red" title="${e.solvencia.pendientes.join(", ")}">${e.solvencia.pendientes.length} pendientes</span><br><small style="color:var(--muted);">${formatearResumenPendientes(e.solvencia.pendientes)}</small></td>
+          <td>Q${deudaFmt}</td>
+          <td><a href="https://wa.me/502${tel}?text=${encodeURIComponent(msg)}" target="_blank" class="btn btn-cyan btn-sm">WhatsApp</a></td>
+        </tr>`;
+      }).join("") : `<tr><td colspan="7">Sin estudiantes insolventes.</td></tr>`;
+    }
+
+    async function validarBoleta(id_pago, nuevo_estado) {
+      if (!confirm(`¿Marcar boleta como ${nuevo_estado}?`)) return;
+      try { alert(await llamarAPI("cambiarEstadoPago", { id_pago, nuevo_estado })); cargarDatos(); } catch (err) { alert(err.message); }
+    }
+
+    function abrirModalPago() {
+      document.querySelector("#modalPago form").reset();
+      llenarSelectoresHora12("pagoHoraH", "pagoHoraM", "pagoHoraS", "pagoHoraAP");
+      document.getElementById("buscarEstPago").value = "";
+      filtrarEstudiantesPago();
+      document.getElementById("modalPago").classList.remove("oculto");
+    }
+
+    function filtrarEstudiantesPago() {
+      const q = (document.getElementById("buscarEstPago")?.value || "").toLowerCase().trim();
+      const lista = datos.estudiantes.filter(e =>
+        `${e.codigo_estudiante} ${e.codigo_mineduc} ${e.nombre_completo}`.toLowerCase().includes(q)
+      );
+      const sel = document.getElementById("pagoEstSelect");
+      sel.innerHTML = lista.length
+        ? lista.map(e => `<option value="${e.id_estudiante}" data-sede="${e.sede}">${e.codigo_estudiante} — ${e.nombre_completo}</option>`).join("")
+        : `<option value="">No hay coincidencias</option>`;
+      refrescarConceptosAdmin();
+    }
+
+    function refrescarConceptosAdmin() {
+      const idEst = document.getElementById("pagoEstSelect").value;
+      const est = datos.estudiantes.find(e => String(e.id_estudiante) === String(idEst));
+      const grupo = datos.grupos.find(g => String(g.id_grupo) === String(est?.id_grupo)) || {};
+      const mesesBase = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+      const todos = ["Inscripción", ...mesesBase];
+
+      const cubiertos = datos.pagos
+        .filter(p => String(p.id_estudiante) === String(idEst) && ["Pagado", "En revisión"].includes(String(p.estado_pago)))
+        .map(p => String(p.mes_correspondiente));
+
+      const pendientes = todos.filter(c => !cubiertos.includes(c));
+      const box = document.getElementById("listaConceptosAdmin");
+
+      if (!idEst || !pendientes.length) {
+        box.innerHTML = `<span style="color:#34d399;font-size:0.85rem;">${idEst ? "✓ Sin conceptos pendientes en este ciclo." : "Seleccione un estudiante."}</span>`;
+        document.getElementById("pagoMonto").value = "0.00";
+        return;
+      }
+
+      box.innerHTML = pendientes.map((m, i) => `
+        <label style="display:flex;align-items:center;gap:0.4rem;color:var(--white);font-size:0.85rem;cursor:pointer;">
+          <input type="checkbox" class="chk-concepto-adm" value="${m}" ${i === 0 ? "checked" : ""} onchange="calcularMontoAdmin()" style="width:auto;" />
+          <span>${m}</span>
+        </label>
+      `).join("");
+
+      box.dataset.cuotaInsc = Number(grupo.inscripcion || 0);
+      box.dataset.cuotaMes = est && est.cuota_especial !== "" ? Number(est.cuota_especial) : Number(grupo.mensualidad || 0);
+      calcularMontoAdmin();
+    }
+
+    function calcularMontoAdmin() {
+      const box = document.getElementById("listaConceptosAdmin");
+      const cInsc = Number(box.dataset.cuotaInsc || 0);
+      const cMes = Number(box.dataset.cuotaMes || 0);
+      let suma = 0;
+      document.querySelectorAll(".chk-concepto-adm:checked").forEach(chk => {
+        suma += chk.value === "Inscripción" ? cInsc : cMes;
+      });
+      document.getElementById("pagoMonto").value = suma.toFixed(2);
+    }
+
+    async function guardarPagoForm(e) {
+      e.preventDefault();
+      const seleccionados = [...document.querySelectorAll(".chk-concepto-adm:checked")].map(c => c.value);
+      if (!seleccionados.length) return alert("Selecciona al menos un mes o concepto.");
+      const sel = document.getElementById("pagoEstSelect");
+      if (!sel.value) return alert("Selecciona un estudiante válido.");
+      const file = document.getElementById("pagoArchivo").files[0];
+      let archivoBase64 = "", nombreArchivo = "";
+      if (file) { archivoBase64 = await convertirArchivoBase64(file); nombreArchivo = file.name; }
+      try {
+        const horaSeleccionada = obtenerHora12Seleccionada("pagoHoraH", "pagoHoraM", "pagoHoraS", "pagoHoraAP");
+        alert(await llamarAPI("registrarPago", {
+          ciclo_escolar: document.getElementById("selectCicloGlobal").value,
+          id_estudiante: sel.value,
+          sede: sel.options[sel.selectedIndex].dataset.sede,
+          conceptos: seleccionados,
+          mes_correspondiente: seleccionados[0],
+          numero_boleta: document.getElementById("pagoNumBoleta").value,
+          fecha_deposito: document.getElementById("pagoFecha").value,
+          hora_deposito: horaSeleccionada,
+          monto: document.getElementById("pagoMonto").value,
+          archivoBase64,
+          nombreArchivo
+        }));
+        cerrarModales(); cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    function renderizarNotas() {
+      const r = datos.reglasUnidades || {};
+      const resBox = document.getElementById("resumenReglasUnidades");
+      if (resBox) {
+        resBox.innerHTML = [1, 2, 3, 4].map(u => {
+          const lista = (r[String(u)] || []).join(", ") || "Sin restricción";
+          return `<span style="margin-right:1rem;"><strong style="color:var(--cyan);">U${u}:</strong> ${lista}</span>`;
+        }).join("");
+      }
+
+      const sel = document.getElementById("filtroGrupoNotas");
+      const val = sel.value;
+      sel.innerHTML = `<option value="TODOS">Todos los grupos</option>` + datos.grupos.map(g => `<option value="${g.id_grupo}">${g.curso} - ${g.nombre_grupo}</option>`).join("");
+      if ([...sel.options].some(o => o.value === val)) sel.value = val;
+
+      const buscar = (document.getElementById("buscadorNotas")?.value || "").toLowerCase();
+      const lista = datos.estudiantes.filter(e => {
+        if (String(e.estado || "Activo") !== "Activo") return false;
+        const coincideGrupo = sel.value === "TODOS" || e.id_grupo === sel.value;
+        const texto = `${e.codigo_estudiante} ${e.codigo_mineduc} ${e.nombre_completo} ${e.nombre_grupo}`.toLowerCase();
+        return coincideGrupo && texto.includes(buscar);
+      });
+
+      document.getElementById("tbodyNotas").innerHTML = lista.map(est => {
+        const n = datos.notas.find(x => x.id_estudiante === est.id_estudiante) || {};
+        const p = Number(n.promedio || 0);
+        const cls = p >= 60 ? "nota-aprobada" : "nota-reprobada";
+        return `<tr>
+          <td>${est.codigo_estudiante}</td><td>${est.nombre_completo}</td><td><small>${est.nombre_grupo}</small></td>
+          <td><input type="number" min="0" max="100" class="nota-input" id="u1_${est.id_estudiante}" value="${n.unidad_1 ?? ""}" /></td>
+          <td><input type="number" min="0" max="100" class="nota-input" id="u2_${est.id_estudiante}" value="${n.unidad_2 ?? ""}" /></td>
+          <td><input type="number" min="0" max="100" class="nota-input" id="u3_${est.id_estudiante}" value="${n.unidad_3 ?? ""}" /></td>
+          <td><input type="number" min="0" max="100" class="nota-input" id="u4_${est.id_estudiante}" value="${n.unidad_4 ?? ""}" /></td>
+          <td class="${cls}">${p}</td><td class="${cls}">${p >= 60 ? "Aprobado" : "Reprobado"}</td>
+          <td><button class="btn btn-primary btn-sm" onclick='guardarNota("${est.id_estudiante}")'>Guardar</button></td>
+        </tr>`;
+      }).join("");
+    }
+
+    async function guardarNota(id_estudiante) {
+      try {
+        await llamarAPI("guardarNotas", {
+          ciclo_escolar: document.getElementById("selectCicloGlobal").value, id_estudiante,
+          unidad_1: document.getElementById(`u1_${id_estudiante}`).value, unidad_2: document.getElementById(`u2_${id_estudiante}`).value,
+          unidad_3: document.getElementById(`u3_${id_estudiante}`).value, unidad_4: document.getElementById(`u4_${id_estudiante}`).value
+        });
+        cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    function renderizarGrupos() {
+      document.getElementById("tbodyGrupos").innerHTML = datos.grupos.map(g => {
+        const alumnosGrupo = datos.estudiantes.filter(e => String(e.id_grupo) === String(g.id_grupo) && String(e.estado || "Activo") === "Activo");
+        const solventes = alumnosGrupo.filter(e => e.solvencia.solvente).length;
+        const recaudado = datos.pagos
+          .filter(p => p.estado_pago === "Pagado" && alumnosGrupo.some(a => String(a.id_estudiante) === String(p.id_estudiante)))
+          .reduce((acc, p) => acc + Number(p.monto || 0), 0);
+
+        return `
+        <tr>
+          <td><strong>${g.curso}</strong></td><td>${g.nombre_grupo}</td><td>${g.sede}</td>
+          <td>${g.dias}<br><small style="color:var(--muted);">${g.horario}</small></td>
+          <td>
+            <span class="badge badge-rol">${alumnosGrupo.length} activos</span>
+            <span class="badge badge-green">${solventes} solventes</span><br>
+            <small style="color:var(--cyan);">Recaudado: Q${recaudado.toFixed(2)}</small>
+          </td>
+          <td>Insc: Q${Number(g.inscripcion).toFixed(2)}<br><small>Mens: Q${Number(g.mensualidad).toFixed(2)}</small></td>
+          <td>${g.mes_inicio} a ${g.mes_fin}</td>
+          <td style="white-space:nowrap;">
+            <button class="btn btn-cyan btn-sm" onclick='descargarListadoGrupo("${g.id_grupo}")'>📥 Listado</button>
+            <button class="btn btn-outline btn-sm" onclick='editarGrupo("${g.id_grupo}")'>Editar</button>
+            <button class="btn btn-danger btn-sm" onclick='borrarGrupo("${g.id_grupo}", "${g.nombre_grupo}")'>Eliminar</button>
+          </td>
+        </tr>`;
+      }).join("");
+    }
+
+    function descargarListadoGrupo(id_grupo) {
+      const grp = datos.grupos.find(g => String(g.id_grupo) === String(id_grupo));
+      if (!grp) return;
+      const alumnos = datos.estudiantes.filter(e => String(e.id_grupo) === String(id_grupo));
+      if (!alumnos.length) return alert("Este grupo aún no tiene estudiantes inscritos.");
+
+      const encabezados = [
+        "No.", "Codigo", "Apellidos y Nombres", "CUI", "Codigo MINEDUC",
+        "Grado Actual", "Instituto", "Fecha Nacimiento", "Sede", "Aldea/Sector",
+        "Direccion", "Tel Estudiante", "Encargado", "Tel Encargado", "Estado", "Solvencia"
+      ];
+
+      const filas = alumnos.map((e, idx) => [
+        idx + 1,
+        e.codigo_estudiante,
+        `${e.primer_apellido || ""} ${e.segundo_apellido || ""}, ${e.primer_nombre || ""} ${e.segundo_nombre || ""} ${e.tercer_nombre || ""}`.replace(/\s+/g, " ").trim(),
+        e.cui || "",
+        e.codigo_mineduc || "",
+        e.grado_actual || "",
+        e.instituto || "",
+        String(e.fecha_nacimiento || "").slice(0, 10),
+        e.sede,
+        e.aldea_sector || "",
+        e.direccion || "",
+        e.telefono_estudiante || "",
+        e.nombre_encargado || "",
+        e.telefono_encargado || "",
+        e.estado || "Activo",
+        e.solvencia.solvente ? "Solvente" : `Pendiente (${e.solvencia.pendientes.join(" / ")})`
+      ]);
+
+      const csv = "\uFEFF" + [encabezados, ...filas]
+        .map(fila => fila.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Listado_${grp.curso}_${grp.nombre_grupo}_${grp.ciclo_escolar}.csv`.replace(/\s+/g, "_");
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function abrirModalGrupo(g = null) {
+      document.getElementById("modalGrupo").classList.remove("oculto");
+      if (g) {
+        document.getElementById("grpId").value = g.id_grupo; document.getElementById("grpCurso").value = g.curso;
+        document.getElementById("grpNombre").value = g.nombre_grupo; document.getElementById("grpSede").value = g.sede;
+        document.getElementById("grpDias").value = g.dias; document.getElementById("grpHorario").value = g.horario;
+        document.getElementById("grpInscripcion").value = g.inscripcion; document.getElementById("grpMensualidad").value = g.mensualidad;
+        document.getElementById("grpMesInicio").value = g.mes_inicio; document.getElementById("grpMesFin").value = g.mes_fin;
+      } else { document.getElementById("grpId").value = ""; document.querySelector("#modalGrupo form").reset(); }
+    }
+
+    function editarGrupo(id) { const g = datos.grupos.find(x => x.id_grupo === id); if (g) abrirModalGrupo(g); }
+
+    async function guardarGrupoForm(e) {
+      e.preventDefault();
+      try {
+        alert(await llamarAPI("guardarGrupo", {
+          id_grupo: document.getElementById("grpId").value, ciclo_escolar: document.getElementById("selectCicloGlobal").value,
+          curso: document.getElementById("grpCurso").value, nombre_grupo: document.getElementById("grpNombre").value,
+          sede: document.getElementById("grpSede").value, dias: document.getElementById("grpDias").value,
+          horario: document.getElementById("grpHorario").value, inscripcion: document.getElementById("grpInscripcion").value,
+          mensualidad: document.getElementById("grpMensualidad").value, mes_inicio: document.getElementById("grpMesInicio").value,
+          mes_fin: document.getElementById("grpMesFin").value
+        }));
+        cerrarModales(); cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    async function borrarGrupo(id_grupo, nombre) {
+      if (!confirm(`¿Seguro que deseas eliminar el grupo "${nombre}"?`)) return;
+      try {
+        alert(await llamarAPI("eliminarGrupo", { id_grupo }));
+        cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    function renderizarDocentes() {
+      document.getElementById("tbodyDocentes").innerHTML = datos.usuarios.map(u => `
+        <tr><td><strong style="color:var(--cyan);">${u.codigo_acceso}</strong></td><td>${u.nombre_completo}</td><td>${u.rol}</td><td>${u.sede}</td><td>${u.activo}</td></tr>`).join("");
+    }
+
+    function abrirModalDocente() { document.querySelector("#modalDocente form").reset(); document.getElementById("modalDocente").classList.remove("oculto"); }
+
+    async function guardarDocenteForm(e) {
+      e.preventDefault();
+      try {
+        const res = await llamarAPI("guardarDocente", {
+          nombre_completo: document.getElementById("docNombre").value,
+          sede: document.getElementById("docSede").value,
+          codigo_acceso: document.getElementById("docCodigo").value
+        });
+        alert(`Docente creado:\nCódigo: ${res.codigo}\nContraseña: ${res.password}`);
+        cerrarModales(); cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    function renderizarFinanzas() {
+      const selGrp = document.getElementById("filtroFinanzasGrupo");
+      const prevGrp = selGrp.value;
+      selGrp.innerHTML = `<option value="TODOS">Todos los Grupos</option>` +
+        datos.grupos.map(g => `<option value="${g.id_grupo}">${g.curso} - ${g.nombre_grupo}</option>`).join("");
+      if ([...selGrp.options].some(o => o.value === prevGrp)) selGrp.value = prevGrp;
+
+      const sedeFin = document.getElementById("filtroFinanzasSede").value;
+      const grpFin = selGrp.value;
+
+      const pagosAprobados = datos.pagos.filter(p => {
+        if (p.estado_pago !== "Pagado") return false;
+        const est = datos.estudiantes.find(e => String(e.id_estudiante) === String(p.id_estudiante));
+        const coincideSede = sedeFin === "TODAS" || String(p.sede) === sedeFin;
+        const coincideGrupo = grpFin === "TODOS" || (est && String(est.id_grupo) === grpFin);
+        return coincideSede && coincideGrupo;
+      });
+
+      const gastosFiltrados = datos.gastos.filter(g => {
+        const coincideSede = sedeFin === "TODAS" || String(g.sede) === sedeFin;
+        return coincideSede && grpFin === "TODOS";
+      });
+
+      const ing = pagosAprobados.reduce((a, b) => a + Number(b.monto || 0), 0);
+      const gas = gastosFiltrados.reduce((a, b) => a + Number(b.monto || 0), 0);
+      const bal = ing - gas;
+
+      document.getElementById("finIngresos").textContent = `Q${ing.toFixed(2)}`;
+      document.getElementById("finGastos").textContent = `Q${gas.toFixed(2)}`;
+      document.getElementById("finBalance").textContent = `Q${bal.toFixed(2)}`;
+
+      const sedesBase = ["San Juan Ostuncalco", "La Esperanza", "General"];
+      document.getElementById("tbodyDesgloseSede").innerHTML = sedesBase.map(s => {
+        const ingS = datos.pagos.filter(p => p.estado_pago === "Pagado" && String(p.sede) === s).reduce((a, b) => a + Number(b.monto || 0), 0);
+        const gasS = datos.gastos.filter(g => String(g.sede) === s).reduce((a, b) => a + Number(b.monto || 0), 0);
+        const balS = ingS - gasS;
+        return `<tr>
+          <td><strong>${s}</strong></td>
+          <td class="nota-aprobada">Q${ingS.toFixed(2)}</td>
+          <td class="nota-reprobada">Q${gasS.toFixed(2)}</td>
+          <td><strong>Q${balS.toFixed(2)}</strong></td>
+        </tr>`;
+      }).join("");
+
+      document.getElementById("tbodyGastos").innerHTML = gastosFiltrados.length
+        ? gastosFiltrados.map(g => `
+          <tr>
+            <td>${String(g.fecha_gasto).slice(0,10)}</td><td>${g.sede}</td><td>${g.categoria}</td>
+            <td>${g.descripcion}</td><td>${g.numero_referencia}</td>
+            <td class="nota-reprobada">Q${Number(g.monto).toFixed(2)}</td>
+            <td><button class="btn btn-danger btn-sm" onclick='borrarGasto("${g.id_gasto}")'>Eliminar</button></td>
+          </tr>`).join("")
+        : `<tr><td colspan="7">No hay gastos registrados con este filtro.</td></tr>`;
+
+      if (grafica) grafica.destroy();
+      grafica = new Chart(document.getElementById("graficaFinanzas"), {
+        type: "bar",
+        data: {
+          labels: ["Ingresos Aprobados", "Gastos", "Balance Neto"],
+          datasets: [{ label: "Quetzales (Q)", data: [ing, gas, bal], backgroundColor: ["#10b981", "#ef4444", "#00d4ff"] }]
+        },
+        options: { plugins: { legend: { labels: { color: "#f8fafc" } } }, scales: { x: { ticks: { color: "#f8fafc" } }, y: { ticks: { color: "#f8fafc" } } } }
+      });
+    }
+
+    function abrirModalGasto() { document.querySelector("#modalGasto form").reset(); document.getElementById("modalGasto").classList.remove("oculto"); }
+
+    async function guardarGastoForm(e) {
+      e.preventDefault();
+      try {
+        alert(await llamarAPI("guardarGasto", {
+          ciclo_escolar: document.getElementById("selectCicloGlobal").value,
+          sede: document.getElementById("gastoSede").value, categoria: document.getElementById("gastoCat").value,
+          descripcion: document.getElementById("gastoDesc").value, monto: document.getElementById("gastoMonto").value,
+          numero_referencia: document.getElementById("gastoRef").value, fecha_gasto: document.getElementById("gastoFecha").value
+        }));
+        cerrarModales(); cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    async function borrarGasto(id_gasto) {
+      if (!confirm("¿Seguro que deseas eliminar este gasto?")) return;
+      try {
+        alert(await llamarAPI("eliminarGasto", { id_gasto }));
+        cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    function abrirModalGastosFijos() {
+      document.getElementById("tbodyGastosFijos").innerHTML = (datos.gastosFijos || []).length
+        ? datos.gastosFijos.map(f => `<tr><td>${f.sede}</td><td>${f.categoria}</td><td>${f.descripcion}</td><td class="nota-reprobada">Q${Number(f.monto).toFixed(2)}</td></tr>`).join("")
+        : `<tr><td colspan="4">Aún no hay gastos fijos configurados.</td></tr>`;
+      document.getElementById("modalGastosFijos").classList.remove("oculto");
+    }
+
+    async function guardarGastoFijoForm(e) {
+      e.preventDefault();
+      try {
+        alert(await llamarAPI("guardarGastoFijo", {
+          sede: document.getElementById("fijoSede").value,
+          categoria: document.getElementById("fijoCat").value,
+          descripcion: document.getElementById("fijoDesc").value,
+          monto: document.getElementById("fijoMonto").value
+        }));
+        e.target.reset();
+        cerrarModales();
+        cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    async function aplicarGastosFijosAhora() {
+      const ciclo = document.getElementById("selectCicloGlobal").value;
+      if (!confirm(`¿Aplicar todos los gastos fijos al ciclo ${ciclo}?`)) return;
+      try {
+        alert(await llamarAPI("aplicarGastosFijos", { ciclo }));
+        cerrarModales();
+        cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    function renderizarBitacora() {
+      document.getElementById("tbodyBitacora").innerHTML = datos.bitacora.map(b => `
+        <tr><td>${new Date(b.fecha_hora).toLocaleString()}</td><td>${b.usuario}</td><td>${b.rol}</td><td>${b.sede}</td><td><strong style="color:var(--cyan);">${b.accion}</strong></td><td>${b.detalle}</td></tr>`).join("");
+    }
+  </script>
+</body>
+</html>

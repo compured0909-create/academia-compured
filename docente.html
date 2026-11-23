@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Docente — COMPURED y Compucenter</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .boleta-oficial {
+      background: #ffffff;
+      color: #111827;
+      padding: 1.15rem 1.35rem;
+      border-radius: 10px;
+      border: 2px solid #1e3a8a;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      line-height: 1.25;
+    }
+    .boleta-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #1e3a8a;
+      padding-bottom: 0.55rem;
+      margin-bottom: 0.55rem;
+      gap: 0.75rem;
+    }
+    .boleta-header img {
+      width: 62px;
+      height: 62px;
+      object-fit: contain;
+    }
+    .boleta-titulo-centro {
+      text-align: center;
+      flex: 1;
+    }
+    .boleta-titulo-centro h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+    }
+    .boleta-titulo-centro p {
+      margin: 1px 0;
+      font-size: 0.72rem;
+      color: #334155;
+    }
+    .boleta-banda {
+      background: #1e3a8a;
+      color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      padding: 0.3rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.6px;
+      margin-bottom: 0.55rem;
+    }
+    .boleta-datos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+      margin-bottom: 0.6rem;
+    }
+    .boleta-tabla {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .boleta-tabla th {
+      background: #dbeafe;
+      color: #1e3a8a;
+      border: 1px solid #1e3a8a;
+      padding: 0.24rem 0.4rem;
+      font-size: 0.72rem;
+      text-align: center;
+    }
+    .boleta-tabla td {
+      border: 1px solid #64748b;
+      padding: 0.24rem 0.4rem;
+      font-size: 0.74rem;
+    }
+    .boleta-lbl {
+      background: #f1f5f9;
+      font-weight: bold;
+      font-size: 0.66rem;
+      color: #334155;
+      text-transform: uppercase;
+    }
+    .boleta-meses-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+      margin-bottom: 0.55rem;
+    }
+    .boleta-mes-card {
+      border: 1px solid #1e3a8a;
+      border-radius: 4px;
+      padding: 0.35rem 0.45rem;
+      text-align: center;
+      background: #f8fafc;
+    }
+    .boleta-mes-card strong {
+      display: block;
+      background: #1e3a8a;
+      color: #ffffff;
+      font-size: 0.7rem;
+      padding: 0.15rem;
+      margin: -0.35rem -0.45rem 0.3rem -0.45rem;
+    }
+    .boleta-mes-card span {
+      display: block;
+      font-size: 0.68rem;
+      margin-top: 0.22rem;
+      color: #0f172a;
+    }
+    .boleta-nota {
+      font-size: 0.68rem;
+      color: #1e293b;
+      border-top: 1px solid #94a3b8;
+      padding-top: 0.35rem;
+    }
+    .boleta-nota ul {
+      margin: 0.2rem 0 0 1.1rem;
+      padding: 0;
+    }
+    .acciones-doc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(85px, 1fr));
+      gap: 0.3rem;
+      min-width: 175px;
+    }
+    .solvencia-resumen {
+      display: block;
+      max-width: 195px;
+      font-size: 0.74rem;
+      color: var(--muted);
+      line-height: 1.25;
+      margin-top: 0.2rem;
+    }
+    .hora-deposito-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      background: rgba(5, 8, 17, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.35rem 0.65rem;
+    }
+    .hora-deposito-campos {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+    .hora-deposito-campos select {
+      width: auto;
+      min-width: 58px;
+      padding: 0.32rem 0.38rem;
+      font-size: 0.85rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 6px;
+      color: var(--white);
+    }
+    .hora-sep {
+      color: var(--muted);
+      font-weight: bold;
+      user-select: none;
+    }
+    .hora-reloj-btn {
+      background: transparent;
+      border: none;
+      color: var(--cyan);
+      cursor: pointer;
+      padding: 0.2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+    }
+    .hora-reloj-btn:hover {
+      background: rgba(0, 212, 255, 0.12);
+    }
+    .req-asterisco {
+      color: #ef4444;
+      font-weight: bold;
+    }
+    @media print {
+      body * { visibility: hidden; }
+      .area-impresion-activa, .area-impresion-activa * { visibility: visible; }
+      .area-impresion-activa {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+    <aside id="sidebar" class="sidebar no-print">
+      <div class="sidebar-header">
+        <div class="brand">
+          <img src="logo.png" alt="Logo" class="brand-img" />
+          <div class="hide-on-collapse">
+            <h1 style="font-size:0.9rem;">COMPURED</h1>
+            <span>Portal Docente</span>
+          </div>
+        </div>
+        <button class="btn-toggle-sidebar" onclick="document.getElementById('sidebar').classList.toggle('colapsado')" title="Desplegar / Contraer menú">☰</button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <button class="menu-item active" onclick="cambiarTab('tabEstudiantesDoc', this)">
+          <span class="menu-icon">🎓</span><span class="hide-on-collapse">Estudiantes</span>
+        </button>
+        <button class="menu-item" onclick="cambiarTab('tabPagosDoc', this)">
+          <span class="menu-icon">💳</span><span class="hide-on-collapse">Boletas y Solvencia</span>
+        </button>
+        <button class="menu-item" onclick="cambiarTab('tabNotasDoc', this)">
+          <span class="menu-icon">📊</span><span class="hide-on-collapse">Calificaciones</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-outline btn-sm btn-block" onclick="abrirModalPassword()">
+          <span>🔑</span><span class="hide-on-collapse">Cambiar clave</span>
+        </button>
+        <button class="btn btn-danger btn-sm btn-block" onclick="cerrarSesion()">
+          <span>🚪</span><span class="hide-on-collapse">Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-workspace">
+      <header class="topbar no-print">
+        <div class="session-info">
+          <button class="btn-toggle-sidebar" onclick="document.getElementById('sidebar').classList.toggle('colapsado')">☰</button>
+          <strong id="lblUsuarioNombre">Docente</strong>
+          <span class="badge badge-rol" id="lblUsuarioRol">Docente</span>
+          <span class="badge badge-sede" id="lblUsuarioSede">Sede</span>
+        </div>
+
+        <div class="panel-actions">
+          <select id="selectCicloGlobal" style="width:auto;" onchange="cargarDatos()">
+            <option value="2025">Ciclo 2025</option>
+            <option value="2026" selected>Ciclo 2026</option>
+            <option value="2027">Ciclo 2027</option>
+            <option value="2028">Ciclo 2028</option>
+          </select>
+        </div>
+      </header>
+
+      <main class="workspace-content">
+        <div id="tabEstudiantesDoc" class="tab-panel card">
+          <div class="panel-header">
+            <h3>Estudiantes de Sede (<span id="lblCicloTablaDoc">2026</span>)</h3>
+            <div class="panel-actions">
+              <select id="filtroEstadoDoc" style="width:auto;" onchange="filtrarEstudiantesDoc()">
+                <option value="Activo" selected>Estado: Activos</option>
+                <option value="Pausado">Estado: Pausados</option>
+                <option value="Retirado">Estado: Retirados</option>
+                <option value="Graduado">Estado: Graduados</option>
+                <option value="TODOS">Todos</option>
+              </select>
+              <select id="filtroGrupoDoc" style="width:auto;" onchange="filtrarEstudiantesDoc()">
+                <option value="TODOS">Todos los grupos</option>
+              </select>
+              <input type="text" id="buscadorEstDoc" class="search-input" placeholder="Buscar estudiante, código o MINEDUC..." oninput="filtrarEstudiantesDoc()" />
+              <button class="btn btn-primary" onclick="abrirModalEstudianteDoc()">+ Inscribir Estudiante</button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Código / MINEDUC</th><th>Estudiante</th><th>Curso y Grupo</th>
+                  <th>Encargado / Tel.</th><th>Estado / Solvencia</th><th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyEstudiantesDoc"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tabPagosDoc" class="tab-panel card oculto">
+          <div class="panel-header">
+            <h3>Registro de Boletas Bancarias</h3>
+            <button class="btn btn-cyan" onclick="abrirModalPagoDoc()">+ Enviar Boleta a Revisión</button>
+          </div>
+          <p style="color:var(--muted);font-size:0.86rem;margin-bottom:1rem;">
+            Las boletas enviadas desde el portal docente quedan <strong>En revisión</strong> para validación final de Dirección.
+          </p>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr><th>Estudiante</th><th>Mes / Concepto</th><th>Monto</th><th>No. Depósito</th><th>Fecha y Hora</th><th>Estado</th></tr>
+              </thead>
+              <tbody id="tbodyPagosDoc"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tabNotasDoc" class="tab-panel card oculto">
+          <div class="panel-header">
+            <h3>Calificaciones (4 Unidades)</h3>
+            <div class="panel-actions">
+              <input type="text" id="buscadorNotasDoc" class="search-input" placeholder="Buscar estudiante..." oninput="renderizarNotasDoc()" />
+              <select id="filtroGrupoNotasDoc" style="width:auto;" onchange="renderizarNotasDoc()">
+                <option value="TODOS">Todos los grupos</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr><th>Código</th><th>Estudiante</th><th>Grupo</th><th>U1</th><th>U2</th><th>U3</th><th>U4</th><th>Promedio</th><th>Estado</th><th>Guardar</th></tr>
+              </thead>
+              <tbody id="tbodyNotasDoc"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL INSCRIBIR / EDITAR ESTUDIANTE DOCENTE -->
+  <div id="modalEstudianteDoc" class="modal oculto">
+    <div class="modal-content modal-lg">
+      <h3 id="tituloModalEstDoc" style="color:var(--cyan);margin-bottom:1rem;">Inscribir Estudiante</h3>
+      <form onsubmit="guardarEstudianteDocForm(event)">
+        <input type="hidden" id="editDocEstId" />
+        <div class="form-grid">
+          <div class="form-group"><label>Primer Nombre *</label><input type="text" id="docEstP1" required /></div>
+          <div class="form-group"><label>Segundo Nombre</label><input type="text" id="docEstP2" /></div>
+          <div class="form-group"><label>Tercer Nombre</label><input type="text" id="docEstP3" /></div>
+          <div class="form-group"><label>Primer Apellido *</label><input type="text" id="docEstA1" required /></div>
+          <div class="form-group"><label>Segundo Apellido</label><input type="text" id="docEstA2" /></div>
+          <div class="form-group"><label>Fecha Nacimiento *</label><input type="date" id="docEstNac" required /></div>
+          <div class="form-group"><label>CUI / DPI (Opcional)</label><input type="text" id="docEstCui" placeholder="Ej. 3012 45678 0901" /></div>
+          <div class="form-group" id="docBoxAldea">
+            <label>Aldea / Sector</label>
+            <select id="docEstAldea">
+              <option value="Cabecera Municipal">Cabecera Municipal</option><option value="La Victoria">La Victoria</option>
+              <option value="Monrovia">Monrovia</option><option value="Las Lagunas Cuaches">Las Lagunas Cuaches</option>
+              <option value="La Nueva Concepción">La Nueva Concepción</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Dirección *</label><input type="text" id="docEstDireccion" required /></div>
+          <div class="form-group"><label>Código MINEDUC (Opcional)</label><input type="text" id="docEstMineduc" placeholder="Ej. 09-04-0123-45" /></div>
+          <div class="form-group">
+            <label>Grado Actual (Opcional)</label>
+            <select id="docEstGrado">
+              <option value="">No aplica / Sin grado actual</option>
+              <option value="Primero Básico">Primero Básico</option>
+              <option value="Segundo Básico">Segundo Básico</option>
+              <option value="Tercero Básico">Tercero Básico</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Instituto / Establecimiento (Opcional)</label><input type="text" id="docEstInstituto" placeholder="Ej. INEB La Victoria" /></div>
+          <div class="form-group"><label>Grupo Asignado *</label><select id="docEstGrupoSelect" required></select></div>
+          <div class="form-group"><label>Tel. Estudiante</label><input type="tel" id="docEstTel" /></div>
+          <div class="form-group"><label>Nombre Encargado *</label><input type="text" id="docEstEncargado" required /></div>
+          <div class="form-group"><label>Tel. Encargado *</label><input type="tel" id="docEstTelEncargado" required /></div>
+          <div class="form-group">
+            <label>Estado del Estudiante</label>
+            <select id="docEstEstado">
+              <option value="Activo">Activo</option>
+              <option value="Pausado">Pausado</option>
+              <option value="Retirado">Retirado</option>
+              <option value="Graduado">Graduado</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="cerrarModales()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnGuardarEstDoc">Guardar e Imprimir Boleta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL BOLETA OFICIAL CONTROL DE PAGOS -->
+  <div id="modalBoletaDoc" class="modal oculto">
+    <div class="modal-content modal-lg" style="max-width:780px;">
+      <div id="areaImpresionBoleta">
+        <div class="boleta-oficial">
+          <div class="boleta-header">
+            <img src="logo.png" alt="Logo COMPURED" />
+            <div class="boleta-titulo-centro">
+              <h2>COMPURED</h2>
+              <p id="bolDireccionSede">Aldea La Victoria, San Juan Ostuncalco, Quetzaltenango.</p>
+              <p>Teléfono: 33834646 &nbsp;|&nbsp; Correo: compured0909@gmail.com</p>
+            </div>
+            <div style="text-align:right;min-width:110px;">
+              <span style="display:inline-block;background:#1e3a8a;color:#fff;padding:0.25rem 0.5rem;border-radius:4px;font-weight:bold;font-size:0.74rem;" id="bolCodigoTag">EST-2026-001</span>
+            </div>
+          </div>
+
+          <div class="boleta-banda">CONTROL DE PAGOS — CICLO ESCOLAR <span id="bolCiclo">2026</span></div>
+
+          <div class="boleta-datos-grid">
+            <table class="boleta-tabla">
+              <thead><tr><th colspan="2">DATOS DEL ESTUDIANTE</th></tr></thead>
+              <tbody>
+                <tr><td colspan="2" class="boleta-lbl">Apellidos y Nombres</td></tr>
+                <tr><td colspan="2"><strong id="credNombre"></strong></td></tr>
+                <tr>
+                  <td class="boleta-lbl" style="width:50%;">CUI</td>
+                  <td class="boleta-lbl" style="width:50%;">Código MINEDUC</td>
+                </tr>
+                <tr>
+                  <td id="credCui">-</td>
+                  <td id="credMineduc">-</td>
+                </tr>
+                <tr><td colspan="2" class="boleta-lbl">Curso y Grupo</td></tr>
+                <tr><td colspan="2"><strong id="credCursoGrupo"></strong></td></tr>
+              </tbody>
+            </table>
+
+            <table class="boleta-tabla">
+              <thead><tr><th colspan="2">DATOS DEL REPRESENTANTE</th></tr></thead>
+              <tbody>
+                <tr><td colspan="2" class="boleta-lbl">Apellidos y Nombres</td></tr>
+                <tr><td colspan="2"><strong id="credEncargado"></strong></td></tr>
+                <tr><td colspan="2" class="boleta-lbl">Dirección</td></tr>
+                <tr><td colspan="2" id="credDireccion"></td></tr>
+                <tr>
+                  <td class="boleta-lbl" style="width:50%;">Celular Estudiante</td>
+                  <td class="boleta-lbl" style="width:50%;">Teléfono Emergencia</td>
+                </tr>
+                <tr>
+                  <td id="credTelEst">-</td>
+                  <td id="credTelEnc">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="boleta-meses-grid" id="bolCuadrosMeses"></div>
+
+          <div class="boleta-nota">
+            <strong>NOTA:</strong>
+            <ul>
+              <li>Los pagos deberán ser cancelados en el número de cuenta <strong>Banrural: 4296326081</strong> a nombre de <strong>Brayan Isaú Romero Pérez</strong>.</li>
+              <li>Las mensualidades deberán ser canceladas los primeros 10 días de cada mes.</li>
+              <li>Este control debe ser presentado al momento de cancelar.</li>
+              <li>El no cumplir con el pago, en el lapso de tiempo estipulado, deberá cancelar una mora de <strong>Q. 20.00</strong> por pago extemporáneo.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer no-print">
+        <button class="btn btn-cyan" onclick="imprimirElementoPorId('areaImpresionBoleta')">🖨️ Imprimir / Descargar Boleta PDF</button>
+        <button class="btn btn-outline" onclick="cerrarModales()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CREDENCIALES SEPARADO -->
+  <div id="modalSoloCredencialesDoc" class="modal oculto">
+    <div class="modal-content">
+      <div id="areaImpresionCredencialesDoc" class="ticket-box">
+        <h3 style="color:var(--cyan);">COMPURED &amp; Compucenter</h3>
+        <p><strong>Credenciales de Acceso al Portal Estudiantil</strong></p>
+        <hr style="margin:0.6rem 0;border-color:var(--border);" />
+        <p><strong>Estudiante:</strong> <span id="soloCredNombreDoc"></span></p>
+        <p><strong>Curso / Grupo:</strong> <span id="soloCredCursoDoc"></span></p>
+        <div class="cred-highlight">
+          <p>Usuario: <strong id="soloCredUsuarioDoc" style="color:var(--cyan);"></strong></p>
+          <p>Contraseña: <strong id="soloCredPassDoc" style="color:var(--cyan);"></strong></p>
+        </div>
+      </div>
+      <div class="modal-footer no-print">
+        <button class="btn btn-cyan" onclick="imprimirElementoPorId('areaImpresionCredencialesDoc')">🖨️ Imprimir Credenciales</button>
+        <button class="btn btn-outline" onclick="cerrarModales()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PAGO DOCENTE -->
+  <div id="modalPagoDoc" class="modal oculto">
+    <div class="modal-content">
+      <h3 style="color:var(--cyan);margin-bottom:1rem;">Enviar Boleta Bancaria</h3>
+      <form onsubmit="guardarPagoDocForm(event)">
+        <div class="form-group">
+          <label>Buscar Estudiante (Nombre, Código o MINEDUC)</label>
+          <input type="text" id="buscarEstPagoDoc" placeholder="Escriba para buscar al estudiante..." oninput="filtrarEstudiantesPagoDoc()" />
+        </div>
+        <div class="form-group">
+          <label>Estudiante *</label>
+          <select id="docPagoEstSelect" onchange="refrescarConceptosDoc()" required></select>
+        </div>
+        <div class="form-group">
+          <label>Meses o Conceptos *</label>
+          <div id="docListaConceptos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:0.4rem;background:rgba(5,8,17,0.75);border:1px solid var(--border);padding:0.65rem;border-radius:10px;"></div>
+        </div>
+        <div class="form-group"><label>Número de Depósito / Boleta *</label><input type="text" id="docPagoBoleta" required /></div>
+        <div class="form-group"><label>Fecha del Depósito *</label><input type="date" id="docPagoFecha" required /></div>
+        <div class="form-group">
+          <label>Hora del depósito: <span class="req-asterisco">*</span></label>
+          <div class="hora-deposito-box">
+            <div class="hora-deposito-campos">
+              <select id="docHoraH" aria-label="Hora"></select>
+              <span class="hora-sep">:</span>
+              <select id="docHoraM" aria-label="Minutos"></select>
+              <span class="hora-sep">:</span>
+              <select id="docHoraS" aria-label="Segundos"></select>
+              <select id="docHoraAP" aria-label="AM o PM"></select>
+            </div>
+            <button type="button" class="hora-reloj-btn" onclick="establecerHoraActual12('docHoraH','docHoraM','docHoraS','docHoraAP')" title="Usar hora actual">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"></circle>
+                <polyline points="12 7 12 12 15.5 14"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="form-group"><label>Valor del Depósito (Q) *</label><input type="number" step="0.01" id="docPagoMonto" placeholder="Escriba el valor exacto del depósito" required /></div>
+        <div class="form-group"><label>Comprobante (Opcional)</label><input type="file" id="docPagoArchivo" accept="image/*,.pdf" /></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="cerrarModales()">Cancelar</button>
+          <button type="submit" class="btn btn-cyan">Enviar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL PASSWORD -->
+  <div id="modalPassword" class="modal oculto">
+    <div class="modal-content">
+      <h3 style="color:var(--cyan);margin-bottom:1rem;">Cambiar Mi Contraseña</h3>
+      <form onsubmit="cambiarPasswordForm(event)">
+        <div class="form-group"><label>Nueva Contraseña *</label><input type="password" id="inputNuevaClave" minlength="4" required /></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="cerrarModales()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="loader" class="loader oculto"><div class="spinner"></div><p>Sincronizando...</p></div>
+
+  <script src="api.js"></script>
+  <script>
+    const sesion = exigirRol("Docente");
+    let datos = { ciclos: [], grupos: [], estudiantes: [], pagos: [], notas: [] };
+
+    const CUADROS_BOLETA = [
+      "INSCRIPCIÓN", "FEBRERO", "MARZO", "ABRIL",
+      "MAYO", "JUNIO", "JULIO", "AGOSTO",
+      "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "SOLVENCIA"
+    ];
+
+    if (sesion) cargarDatos();
+
+    function llenarSelectoresHora12(idHora, idMin, idSeg, idAmp) {
+      const selH = document.getElementById(idHora);
+      const selM = document.getElementById(idMin);
+      const selS = document.getElementById(idSeg);
+      const selA = document.getElementById(idAmp);
+      if (!selH || !selM || !selS || !selA) return;
+
+      selH.innerHTML = `<option value="">--</option>` + Array.from({ length: 12 }, (_, idx) => {
+        const val = String(idx + 1).padStart(2, "0");
+        return `<option value="${val}">${val}</option>`;
+      }).join("");
+
+      const opts60 = `<option value="">--</option>` + Array.from({ length: 60 }, (_, idx) => {
+        const val = String(idx).padStart(2, "0");
+        return `<option value="${val}">${val}</option>`;
+      }).join("");
+
+      selM.innerHTML = opts60;
+      selS.innerHTML = opts60;
+      selA.innerHTML = `<option value="">--</option><option value="AM">AM</option><option value="PM">PM</option>`;
+
+      selH.value = "";
+      selM.value = "";
+      selS.value = "";
+      selA.value = "";
+    }
+
+    function establecerHoraActual12(idHora, idMin, idSeg, idAmp) {
+      const ahora = new Date();
+      let h24 = ahora.getHours();
+      const ampm = h24 >= 12 ? "PM" : "AM";
+      let h12 = h24 % 12;
+      if (h12 === 0) h12 = 12;
+      document.getElementById(idHora).value = String(h12).padStart(2, "0");
+      document.getElementById(idMin).value = String(ahora.getMinutes()).padStart(2, "0");
+      document.getElementById(idSeg).value = String(ahora.getSeconds()).padStart(2, "0");
+      document.getElementById(idAmp).value = ampm;
+    }
+
+    function obtenerHora12Seleccionada(idHora, idMin, idSeg, idAmp) {
+      const h = document.getElementById(idHora).value;
+      const m = document.getElementById(idMin).value;
+      const s = document.getElementById(idSeg).value;
+      const amp = document.getElementById(idAmp).value;
+      if (!h || !m || !s || !amp) {
+        throw new Error("Seleccione hora, minutos, segundos y AM/PM en la hora del depósito.");
+      }
+      return `${h}:${m}:${s} ${amp}`;
+    }
+
+    function imprimirElementoPorId(id) {
+      document.querySelectorAll(".area-impresion-activa").forEach(el => el.classList.remove("area-impresion-activa"));
+      const target = document.getElementById(id);
+      if (target) target.classList.add("area-impresion-activa");
+      window.print();
+    }
+
+    function cambiarTab(id, btn) {
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("oculto"));
+      document.querySelectorAll(".menu-item").forEach(b => b.classList.remove("active"));
+      document.getElementById(id).classList.remove("oculto");
+      btn.classList.add("active");
+    }
+
+    function sincronizarCiclos(lista) {
+      if (!lista || !lista.length) return;
+      const sel = document.getElementById("selectCicloGlobal");
+      const actual = sel.value;
+      sel.innerHTML = lista.map(c => `<option value="${c}">Ciclo ${c}</option>`).join("");
+      sel.value = lista.includes(actual) ? actual : lista[lista.length - 1];
+      document.getElementById("lblCicloTablaDoc").textContent = sel.value;
+    }
+
+    async function cargarDatos() {
+      try {
+        const ciclo = document.getElementById("selectCicloGlobal").value;
+        datos = await llamarAPI("obtenerDashboard", { ciclo, sedeFiltro: sesion.sede });
+        sincronizarCiclos(datos.ciclos);
+        poblarFiltroGruposDoc();
+        renderizarEstudiantesDoc();
+        renderizarPagosDoc();
+        renderizarNotasDoc();
+      } catch (err) { alert(err.message); }
+    }
+
+    function poblarFiltroGruposDoc() {
+      const sel = document.getElementById("filtroGrupoDoc");
+      if (!sel) return;
+      const actual = sel.value;
+      sel.innerHTML = `<option value="TODOS">Todos los grupos</option>` +
+        datos.grupos.map(g => `<option value="${g.id_grupo}">${g.curso} - ${g.nombre_grupo}</option>`).join("");
+      if ([...sel.options].some(o => o.value === actual)) sel.value = actual;
+    }
+
+    function formatearResumenPendientes(pendientes = []) {
+      if (!pendientes.length) return "";
+      const muestra = pendientes.slice(0, 2).join(", ");
+      const resto = pendientes.length - 2;
+      return resto > 0 ? `${muestra} (+${resto} más)` : muestra;
+    }
+
+    function renderizarEstudiantesDoc() {
+      document.getElementById("tbodyEstudiantesDoc").innerHTML = datos.estudiantes.map(e => {
+        const estadoActual = String(e.estado || "Activo").trim();
+        const mineducTxt = String(e.codigo_mineduc || "").trim() || "No registrado";
+        const subInfo = [e.grado_actual, e.instituto].filter(Boolean).join(" • ");
+        const listaPend = e.solvencia.pendientes || [];
+        const resumenCorto = formatearResumenPendientes(listaPend);
+        const deudaFmt = Number(e.solvencia.deudaTotal || 0).toFixed(2);
+
+        return `
+          <tr data-estado="${estadoActual}" data-grupo="${e.id_grupo}">
+            <td><strong>${e.codigo_estudiante}</strong><br><small style="color:var(--muted);">MINEDUC: ${mineducTxt}</small></td>
+            <td>${e.nombre_completo}${subInfo ? `<br><small style="color:var(--muted);">${subInfo}</small>` : ""}</td>
+            <td><strong>${e.curso}</strong><br><small style="color:var(--cyan);">${e.nombre_grupo}</small></td>
+            <td>${e.nombre_encargado}<br><small style="color:var(--muted);">${e.telefono_encargado}</small></td>
+            <td>
+              <select onchange='cambiarEstadoEstDocRapido("${e.id_estudiante}", this.value)' style="width:auto;padding:0.2rem 0.4rem;font-size:0.78rem;margin-bottom:0.25rem;">
+                <option value="Activo" ${estadoActual === "Activo" ? "selected" : ""}>Activo</option>
+                <option value="Pausado" ${estadoActual === "Pausado" ? "selected" : ""}>Pausado</option>
+                <option value="Retirado" ${estadoActual === "Retirado" ? "selected" : ""}>Retirado</option>
+                <option value="Graduado" ${estadoActual === "Graduado" ? "selected" : ""}>Graduado</option>
+              </select><br>
+              ${estadoActual !== "Activo"
+                ? `<span class="badge badge-rol">${estadoActual}</span>`
+                : (e.solvencia.solvente
+                    ? '<span class="badge badge-green">Solvente</span>'
+                    : `<span class="badge badge-red">Pendiente (Q${deudaFmt})</span><span class="solvencia-resumen" title="Pendientes: ${listaPend.join(", ")}">${resumenCorto}</span>`)}
+            </td>
+            <td>
+              <div class="acciones-doc-grid">
+                <button class="btn btn-cyan btn-sm" onclick='verBoletaEstudianteDoc("${e.id_estudiante}")'>🖨️ Boleta</button>
+                <button class="btn btn-outline btn-sm" onclick='verSoloCredencialesDoc("${e.id_estudiante}")'>🔑 Clave</button>
+                <button class="btn btn-outline btn-sm" style="grid-column:span 2;" onclick='editarEstudianteDoc("${e.id_estudiante}")'>✏️ Editar datos</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+      filtrarEstudiantesDoc();
+    }
+
+    async function cambiarEstadoEstDocRapido(id_estudiante, nuevo_estado) {
+      try {
+        await llamarAPI("cambiarEstadoEstudiante", { id_estudiante, nuevo_estado });
+        cargarDatos();
+      } catch (err) { alert(err.message); cargarDatos(); }
+    }
+
+    function filtrarEstudiantesDoc() {
+      const q = (document.getElementById("buscadorEstDoc")?.value || "").toLowerCase();
+      const estSel = document.getElementById("filtroEstadoDoc")?.value || "Activo";
+      const grpSel = document.getElementById("filtroGrupoDoc")?.value || "TODOS";
+      document.querySelectorAll("#tbodyEstudiantesDoc tr").forEach(tr => {
+        const matchTexto = tr.textContent.toLowerCase().includes(q);
+        const matchEst = estSel === "TODOS" || tr.dataset.estado === estSel;
+        const matchGrp = grpSel === "TODOS" || tr.dataset.grupo === grpSel;
+        tr.style.display = (matchTexto && matchEst && matchGrp) ? "" : "none";
+      });
+    }
+
+    function pintarBoletaControlDoc(info) {
+      document.getElementById("bolCiclo").textContent = info.ciclo || document.getElementById("selectCicloGlobal").value;
+      document.getElementById("bolCodigoTag").textContent = info.codigo || "";
+      document.getElementById("bolDireccionSede").textContent = info.sede === "La Esperanza"
+        ? "Sede La Esperanza, Quetzaltenango."
+        : "Aldea La Victoria, San Juan Ostuncalco, Quetzaltenango.";
+
+      document.getElementById("credNombre").textContent = info.apellidos_nombres || info.nombre || "";
+      document.getElementById("credCui").textContent = info.cui || "________________";
+      document.getElementById("credMineduc").textContent = info.mineduc || "No registrado";
+      document.getElementById("credCursoGrupo").textContent = info.cursoGrupo || `${info.curso || ""} (${info.grupo || ""})`;
+
+      document.getElementById("credEncargado").textContent = info.nombre_encargado || "";
+      document.getElementById("credDireccion").textContent = info.direccion || "";
+      document.getElementById("credTelEst").textContent = info.telefono_estudiante || "________";
+      document.getElementById("credTelEnc").textContent = info.telefono_encargado || "________";
+
+      const pagosEst = info.pagos || [];
+      document.getElementById("bolCuadrosMeses").innerHTML = CUADROS_BOLETA.map(titulo => {
+        const pagoEncontrado = pagosEst.find(p =>
+          String(p.mes_correspondiente).trim().toUpperCase() === titulo &&
+          String(p.estado_pago).trim() === "Pagado"
+        );
+        const fechaTxt = pagoEncontrado ? String(pagoEncontrado.fecha_deposito).slice(0, 10) : "____/____/_____";
+        const reciboTxt = pagoEncontrado ? `#${pagoEncontrado.numero_boleta}` : "________";
+        return `
+          <div class="boleta-mes-card">
+            <strong>${titulo}</strong>
+            <span>Fecha de Pago<br><b>${fechaTxt}</b></span>
+            <span>Recibo No. <b>${reciboTxt}</b></span>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("modalBoletaDoc").classList.remove("oculto");
+    }
+
+    function verBoletaEstudianteDoc(id) {
+      const e = datos.estudiantes.find(x => x.id_estudiante === id);
+      if (!e) return;
+      const pagosEst = datos.pagos.filter(p => String(p.id_estudiante) === String(e.id_estudiante));
+      const apellidosNombres = `${e.primer_apellido || ""} ${e.segundo_apellido || ""}, ${e.primer_nombre || ""} ${e.segundo_nombre || ""} ${e.tercer_nombre || ""}`.replace(/\s+/g, " ").trim();
+      pintarBoletaControlDoc({
+        ciclo: e.ciclo_escolar,
+        codigo: e.codigo_estudiante,
+        sede: e.sede,
+        apellidos_nombres: apellidosNombres,
+        cui: String(e.cui || "").trim(),
+        mineduc: String(e.codigo_mineduc || "").trim() || "No registrado",
+        cursoGrupo: `${e.curso} (${e.nombre_grupo})`,
+        nombre_encargado: e.nombre_encargado,
+        direccion: e.direccion,
+        telefono_estudiante: e.telefono_estudiante,
+        telefono_encargado: e.telefono_encargado,
+        pagos: pagosEst
+      });
+    }
+
+    function verSoloCredencialesDoc(id) {
+      const e = datos.estudiantes.find(x => x.id_estudiante === id);
+      if (!e) return;
+      document.getElementById("soloCredNombreDoc").textContent = e.nombre_completo;
+      document.getElementById("soloCredCursoDoc").textContent = `${e.curso} (${e.nombre_grupo})`;
+      document.getElementById("soloCredUsuarioDoc").textContent = e.codigo_estudiante;
+      document.getElementById("soloCredPassDoc").textContent = e.password;
+      document.getElementById("modalSoloCredencialesDoc").classList.remove("oculto");
+    }
+
+    function abrirModalEstudianteDoc(e = null) {
+      document.getElementById("modalEstudianteDoc").classList.remove("oculto");
+      document.getElementById("docBoxAldea").classList.toggle("oculto", sesion.sede !== "San Juan Ostuncalco");
+      const lista = datos.grupos.filter(g => g.sede === sesion.sede && g.activo === "Activo");
+      document.getElementById("docEstGrupoSelect").innerHTML = lista.length
+        ? lista.map(g => `<option value="${g.id_grupo}">${g.curso} - ${g.nombre_grupo} (${g.dias} ${g.horario})</option>`).join("")
+        : `<option value="">Sin grupos activos en su sede</option>`;
+
+      if (e) {
+        document.getElementById("tituloModalEstDoc").textContent = "Editar Datos del Estudiante";
+        document.getElementById("btnGuardarEstDoc").textContent = "Guardar Cambios";
+        document.getElementById("editDocEstId").value = e.id_estudiante;
+        document.getElementById("docEstP1").value = e.primer_nombre || "";
+        document.getElementById("docEstP2").value = e.segundo_nombre || "";
+        document.getElementById("docEstP3").value = e.tercer_nombre || "";
+        document.getElementById("docEstA1").value = e.primer_apellido || "";
+        document.getElementById("docEstA2").value = e.segundo_apellido || "";
+        document.getElementById("docEstNac").value = String(e.fecha_nacimiento || "").slice(0, 10);
+        document.getElementById("docEstCui").value = e.cui || "";
+        document.getElementById("docEstAldea").value = e.aldea_sector || "Cabecera Municipal";
+        document.getElementById("docEstDireccion").value = e.direccion || "";
+        document.getElementById("docEstMineduc").value = e.codigo_mineduc || "";
+        document.getElementById("docEstGrado").value = e.grado_actual || "";
+        document.getElementById("docEstInstituto").value = e.instituto || "";
+        document.getElementById("docEstGrupoSelect").value = e.id_grupo || "";
+        document.getElementById("docEstTel").value = e.telefono_estudiante || "";
+        document.getElementById("docEstEncargado").value = e.nombre_encargado || "";
+        document.getElementById("docEstTelEncargado").value = e.telefono_encargado || "";
+        document.getElementById("docEstEstado").value = e.estado || "Activo";
+      } else {
+        document.getElementById("tituloModalEstDoc").textContent = "Inscribir Estudiante";
+        document.getElementById("btnGuardarEstDoc").textContent = "Guardar e Imprimir Boleta";
+        document.getElementById("editDocEstId").value = "";
+        document.querySelector("#modalEstudianteDoc form").reset();
+        document.getElementById("docEstGrado").value = "";
+        document.getElementById("docEstEstado").value = "Activo";
+      }
+    }
+
+    function editarEstudianteDoc(id) {
+      const est = datos.estudiantes.find(x => x.id_estudiante === id);
+      if (est) abrirModalEstudianteDoc(est);
+    }
+
+    async function guardarEstudianteDocForm(e) {
+      e.preventDefault();
+      try {
+        const res = await llamarAPI("guardarEstudiante", {
+          id_estudiante: document.getElementById("editDocEstId").value,
+          ciclo_escolar: document.getElementById("selectCicloGlobal").value,
+          sede: sesion.sede,
+          aldea_sector: document.getElementById("docEstAldea").value,
+          id_grupo: document.getElementById("docEstGrupoSelect").value,
+          primer_nombre: document.getElementById("docEstP1").value,
+          segundo_nombre: document.getElementById("docEstP2").value,
+          tercer_nombre: document.getElementById("docEstP3").value,
+          primer_apellido: document.getElementById("docEstA1").value,
+          segundo_apellido: document.getElementById("docEstA2").value,
+          fecha_nacimiento: document.getElementById("docEstNac").value,
+          cui: document.getElementById("docEstCui").value,
+          direccion: document.getElementById("docEstDireccion").value,
+          codigo_mineduc: document.getElementById("docEstMineduc").value,
+          grado_actual: document.getElementById("docEstGrado").value,
+          instituto: document.getElementById("docEstInstituto").value,
+          telefono_estudiante: document.getElementById("docEstTel").value,
+          nombre_encargado: document.getElementById("docEstEncargado").value,
+          telefono_encargado: document.getElementById("docEstTelEncargado").value,
+          estado: document.getElementById("docEstEstado").value
+        });
+        cerrarModales();
+        await cargarDatos();
+        if (res.codigo) {
+          pintarBoletaControlDoc({
+            ciclo: res.ciclo_escolar,
+            codigo: res.codigo,
+            sede: res.sede,
+            apellidos_nombres: res.apellidos_nombres || res.nombre,
+            cui: res.cui,
+            mineduc: res.mineduc || "No registrado",
+            cursoGrupo: `${res.curso} (${res.grupo})`,
+            nombre_encargado: res.nombre_encargado,
+            direccion: res.direccion,
+            telefono_estudiante: res.telefono_estudiante,
+            telefono_encargado: res.telefono_encargado,
+            pagos: []
+          });
+        } else {
+          alert(res.mensaje);
+        }
+      } catch (err) { alert(err.message); }
+    }
+
+    function renderizarPagosDoc() {
+      document.getElementById("tbodyPagosDoc").innerHTML = datos.pagos.length
+        ? datos.pagos.slice().reverse().map(p => {
+            const est = datos.estudiantes.find(e => e.id_estudiante === p.id_estudiante) || {};
+            const fechaStr = String(p.fecha_deposito || "").slice(0, 10);
+            const horaStr = p.hora_deposito ? `<br><small style="color:var(--cyan);">${p.hora_deposito}</small>` : "";
+            return `<tr>
+              <td>${est.nombre_completo || p.id_estudiante}</td>
+              <td>${p.mes_correspondiente}</td>
+              <td>Q${Number(p.monto || 0).toFixed(2)}</td>
+              <td>#${p.numero_boleta}</td>
+              <td>${fechaStr}${horaStr}</td>
+              <td><span class="badge badge-rol">${p.estado_pago}</span></td>
+            </tr>`;
+          }).join("")
+        : `<tr><td colspan="6">Sin boletas registradas en este ciclo.</td></tr>`;
+    }
+
+    function abrirModalPagoDoc() {
+      document.querySelector("#modalPagoDoc form").reset();
+      llenarSelectoresHora12("docHoraH", "docHoraM", "docHoraS", "docHoraAP");
+      document.getElementById("buscarEstPagoDoc").value = "";
+      filtrarEstudiantesPagoDoc();
+      document.getElementById("modalPagoDoc").classList.remove("oculto");
+    }
+
+    function filtrarEstudiantesPagoDoc() {
+      const q = (document.getElementById("buscarEstPagoDoc")?.value || "").toLowerCase().trim();
+      const lista = datos.estudiantes.filter(e =>
+        `${e.codigo_estudiante} ${e.codigo_mineduc || ""} ${e.nombre_completo}`.toLowerCase().includes(q)
+      );
+      const sel = document.getElementById("docPagoEstSelect");
+      sel.innerHTML = lista.length
+        ? lista.map(e => `<option value="${e.id_estudiante}">${e.codigo_estudiante} — ${e.nombre_completo}</option>`).join("")
+        : `<option value="">No hay coincidencias</option>`;
+      refrescarConceptosDoc();
+    }
+
+    function refrescarConceptosDoc() {
+      const idEst = document.getElementById("docPagoEstSelect").value;
+      const mesesBase = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+      const todos = ["Inscripción", ...mesesBase];
+      const cubiertos = datos.pagos
+        .filter(p => String(p.id_estudiante) === String(idEst) && ["Pagado", "En revisión"].includes(String(p.estado_pago)))
+        .map(p => String(p.mes_correspondiente));
+      const pendientes = todos.filter(c => !cubiertos.includes(c));
+      const box = document.getElementById("docListaConceptos");
+
+      if (!idEst || !pendientes.length) {
+        box.innerHTML = `<span style="color:#34d399;font-size:0.82rem;">${idEst ? "✓ Sin conceptos pendientes." : "Seleccione un estudiante."}</span>`;
+        return;
+      }
+
+      box.innerHTML = pendientes.map((m, i) => `
+        <label style="display:flex;align-items:center;gap:0.35rem;color:var(--white);font-size:0.82rem;cursor:pointer;">
+          <input type="checkbox" class="chk-concepto-doc" value="${m}" ${i === 0 ? "checked" : ""} style="width:auto;" />
+          <span>${m}</span>
+        </label>
+      `).join("");
+    }
+
+    async function guardarPagoDocForm(e) {
+      e.preventDefault();
+      const seleccionados = [...document.querySelectorAll(".chk-concepto-doc:checked")].map(c => c.value);
+      if (!seleccionados.length) return alert("Seleccione al menos un mes o concepto.");
+      const idEst = document.getElementById("docPagoEstSelect").value;
+      if (!idEst) return alert("Seleccione un estudiante válido.");
+      const file = document.getElementById("docPagoArchivo").files[0];
+      let archivoBase64 = "", nombreArchivo = "";
+      if (file) { archivoBase64 = await convertirArchivoBase64(file); nombreArchivo = file.name; }
+      try {
+        const horaSeleccionada = obtenerHora12Seleccionada("docHoraH", "docHoraM", "docHoraS", "docHoraAP");
+        alert(await llamarAPI("registrarPago", {
+          ciclo_escolar: document.getElementById("selectCicloGlobal").value,
+          id_estudiante: idEst,
+          sede: sesion.sede,
+          conceptos: seleccionados,
+          mes_correspondiente: seleccionados[0],
+          numero_boleta: document.getElementById("docPagoBoleta").value,
+          fecha_deposito: document.getElementById("docPagoFecha").value,
+          hora_deposito: horaSeleccionada,
+          monto: document.getElementById("docPagoMonto").value,
+          archivoBase64,
+          nombreArchivo
+        }));
+        cerrarModales(); cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
+    function renderizarNotasDoc() {
+      const sel = document.getElementById("filtroGrupoNotasDoc");
+      const val = sel.value;
+      sel.innerHTML = `<option value="TODOS">Todos los grupos</option>` + datos.grupos.map(g => `<option value="${g.id_grupo}">${g.curso} - ${g.nombre_grupo}</option>`).join("");
+      if ([...sel.options].some(o => o.value === val)) sel.value = val;
+
+      const buscar = (document.getElementById("buscadorNotasDoc")?.value || "").toLowerCase();
+      const lista = datos.estudiantes.filter(e => {
+        if (String(e.estado || "Activo") !== "Activo") return false;
+        const matchGrp = sel.value === "TODOS" || e.id_grupo === sel.value;
+        const txt = `${e.codigo_estudiante} ${e.nombre_completo} ${e.nombre_grupo}`.toLowerCase();
+        return matchGrp && txt.includes(buscar);
+      });
+
+      document.getElementById("tbodyNotasDoc").innerHTML = lista.map(est => {
+        const n = datos.notas.find(x => x.id_estudiante === est.id_estudiante) || {};
+        const p = Number(n.promedio || 0);
+        const cls = p >= 60 ? "nota-aprobada" : "nota-reprobada";
+        return `<tr>
+          <td>${est.codigo_estudiante}</td><td>${est.nombre_completo}</td><td><small>${est.nombre_grupo}</small></td>
+          <td><input type="number" min="0" max="100" class="nota-input" id="du1_${est.id_estudiante}" value="${n.unidad_1 ?? ""}" /></td>
+          <td><input type="number" min="0" max="100" class="nota-input" id="du2_${est.id_estudiante}" value="${n.unidad_2 ?? ""}" /></td>
+          <td><input type="number" min="0" max="100" class="nota-input" id="du3_${est.id_estudiante}" value="${n.unidad_3 ?? ""}" /></td>
+          <td><input type="number" min="0" max="100" class="nota-input" id="du4_${est.id_estudiante}" value="${n.unidad_4 ?? ""}" /></td>
+          <td class="${cls}">${p}</td><td class="${cls}">${p >= 60 ? "Aprobado" : "Reprobado"}</td>
+          <td><button class="btn btn-primary btn-sm" onclick='guardarNotaDoc("${est.id_estudiante}")'>Guardar</button></td>
+        </tr>`;
+      }).join("");
+    }
+
+    async function guardarNotaDoc(id_estudiante) {
+      try {
+        await llamarAPI("guardarNotas", {
+          ciclo_escolar: document.getElementById("selectCicloGlobal").value,
+          sede: sesion.sede,
+          id_estudiante,
+          unidad_1: document.getElementById(`du1_${id_estudiante}`).value,
+          unidad_2: document.getElementById(`du2_${id_estudiante}`).value,
+          unidad_3: document.getElementById(`du3_${id_estudiante}`).value,
+          unidad_4: document.getElementById(`du4_${id_estudiante}`).value
+        });
+        cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+  </script>
+</body>
+</html>
