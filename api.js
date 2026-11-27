@@ -1,70 +1,75 @@
 // =========================================================================
-// CONECTOR FRONTEND -> GOOGLE APPS SCRIPT
+// CONECTOR FRONTEND - ACADEMIA COMPURED Y COMPUCENTER
 // =========================================================================
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzitV3d9Epu2DBnSXpndMJFi9EUx-3gdSBsb9Lc3KamsHneO0pDP53m0qiYokkvrh9jjA/exec";
-const WHATSAPP_ACADEMIA = "50233834646";
+const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbzitV3d9Epu2DBnSXpndMJFi9EUx-3gdSBsb9Lc3KamsHneO0pDP53m0qiYokkvrh9jjA/exec";
 
-function mostrarLoader(visible) {
-  const el = document.getElementById("loader");
-  if (el) el.classList.toggle("oculto", !visible);
-}
-
-function guardarSesion(sesion) {
-  sessionStorage.setItem("compured_sesion", JSON.stringify(sesion));
+function mostrarLoader(estado) {
+  const loader = document.getElementById("loader");
+  if (loader) {
+    loader.classList.toggle("oculto", !estado);
+  }
 }
 
 function obtenerSesion() {
-  const raw = sessionStorage.getItem("compured_sesion");
-  return raw ? JSON.parse(raw) : null;
+  const raw = sessionStorage.getItem("sesionCompured");
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
 }
 
-function cerrarSesion() {
-  sessionStorage.removeItem("compured_sesion");
-  window.location.href = "login.html";
+function guardarSesion(sesion) {
+  sessionStorage.setItem("sesionCompured", JSON.stringify(sesion));
 }
 
-function exigirRol(rolEsperado) {
+function exigirRol(rolRequerido) {
   const sesion = obtenerSesion();
   if (!sesion) {
-    window.location.href = "login.html";
+    window.location.href = "index.html";
     return null;
   }
-  if (rolEsperado && sesion.rol !== rolEsperado) {
-    redirigirPorRol(sesion.rol);
+  if (rolRequerido && sesion.rol !== rolRequerido) {
+    window.location.href = "index.html";
     return null;
   }
-  pintarEncabezadoSesion(sesion);
-  return sesion;
-}
 
-function redirigirPorRol(rol) {
-  if (rol === "Director") window.location.href = "director.html";
-  else if (rol === "Docente") window.location.href = "docente.html";
-  else if (rol === "Estudiante") window.location.href = "estudiante.html";
-  else window.location.href = "login.html";
-}
-
-function pintarEncabezadoSesion(sesion) {
   const lblNombre = document.getElementById("lblUsuarioNombre");
   const lblRol = document.getElementById("lblUsuarioRol");
   const lblSede = document.getElementById("lblUsuarioSede");
   if (lblNombre) lblNombre.textContent = sesion.nombre;
   if (lblRol) lblRol.textContent = sesion.rol;
   if (lblSede) lblSede.textContent = sesion.sede;
+
+  return sesion;
 }
 
-async function llamarAPI(accion, datos = {}, sesionOverride = null) {
+function cerrarSesion() {
+  sessionStorage.removeItem("sesionCompured");
+  window.location.href = "index.html";
+}
+
+async function llamarAPI(accion, datos = {}) {
+  const sesion = obtenerSesion() || {};
   mostrarLoader(true);
   try {
-    const sesion = sesionOverride !== null ? sesionOverride : obtenerSesion();
-    const respuesta = await fetch(API_URL, {
+    const respuesta = await fetch(URL_WEB_APP, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ accion, datos, sesion })
     });
-    const json = await respuesta.json();
-    if (!json.exito) throw new Error(json.mensaje || "Error en el servidor.");
+    const texto = await respuesta.text();
+    let json;
+    try {
+      json = JSON.parse(texto);
+    } catch (errParse) {
+      throw new Error("La respuesta del servidor no tuvo formato JSON válido.");
+    }
+    if (!json.exito) {
+      throw new Error(json.mensaje || "Ocurrió un error en la operación.");
+    }
     return json.data;
   } finally {
     mostrarLoader(false);
@@ -80,18 +85,24 @@ function convertirArchivoBase64(file) {
   });
 }
 
-function abrirModalPassword() {
-  document.getElementById("inputNuevaClave").value = "";
-  document.getElementById("modalPassword").classList.remove("oculto");
+function cerrarModales() {
+  document.querySelectorAll(".modal").forEach(m => {
+    if (m.id === "modalBienvenidaCiclo" || m.id === "modalBienvenidaCicloDoc") return;
+    m.classList.add("oculto");
+  });
 }
 
-function cerrarModales() {
-  document.querySelectorAll(".modal").forEach(m => m.classList.add("oculto"));
+function abrirModalPassword() {
+  const form = document.querySelector("#modalPassword form");
+  if (form) form.reset();
+  const modal = document.getElementById("modalPassword");
+  if (modal) modal.classList.remove("oculto");
 }
 
 async function cambiarPasswordForm(e) {
   e.preventDefault();
-  const nuevaPassword = document.getElementById("inputNuevaClave").value.trim();
+  const input = document.getElementById("inputNuevaClave");
+  const nuevaPassword = input ? input.value.trim() : "";
   try {
     const msg = await llamarAPI("cambiarPassword", { nuevaPassword });
     alert(msg);
@@ -99,4 +110,10 @@ async function cambiarPasswordForm(e) {
   } catch (err) {
     alert(err.message);
   }
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
 }

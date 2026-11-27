@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050811" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
   <title>Dirección General — COMPURED y Compucenter</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -196,6 +200,39 @@
     .sidebar-backdrop.activo {
       display: block;
     }
+    .btn-salir-movil {
+      display: none;
+    }
+    .bienvenida-modal-box {
+      max-width: 450px;
+      text-align: center;
+      border: 1px solid rgba(0, 212, 255, 0.45);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+    }
+    .bienvenida-logo {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      margin: 0 auto 0.6rem auto;
+      display: block;
+    }
+    .bienvenida-saludo {
+      color: var(--cyan);
+      font-size: 1.25rem;
+      margin-bottom: 0.45rem;
+      line-height: 1.3;
+    }
+    .bienvenida-texto {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .bienvenida-select {
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 0.65rem;
+    }
 
     @media (max-width: 820px) {
       .app-layout {
@@ -210,12 +247,33 @@
         bottom: 0;
         width: 265px;
         max-width: 82vw;
+        height: 100dvh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
         z-index: 1000;
         transform: translateX(-100%);
         transition: transform 0.25s ease;
       }
       .sidebar.movil-abierto {
         transform: translateX(0);
+      }
+      .sidebar-menu {
+        flex: 1 1 auto;
+        overflow-y: auto;
+      }
+      .sidebar-footer {
+        margin-top: auto;
+        flex-shrink: 0;
+        padding-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+      }
+      .btn-salir-movil {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
       }
       .main-workspace {
         width: 100%;
@@ -375,6 +433,7 @@
           <strong id="lblUsuarioNombre">Director</strong>
           <span class="badge badge-rol" id="lblUsuarioRol">Director</span>
           <span class="badge badge-sede" id="lblUsuarioSede">Sede</span>
+          <button class="btn btn-danger btn-sm btn-salir-movil" onclick="cerrarSesion()">🚪 Salir</button>
         </div>
 
         <div class="panel-actions">
@@ -390,6 +449,7 @@
             <option value="2028">Ciclo 2028</option>
           </select>
           <button class="btn btn-cyan btn-sm" onclick="agregarCicloEscolar()">+ Ciclo</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminarCicloEscolar()">🗑️ Eliminar Ciclo</button>
         </div>
       </header>
 
@@ -433,7 +493,10 @@
         <div id="tabPagos" class="tab-panel card oculto">
           <div class="panel-header">
             <h3>Boletas Bancarias y Solvencia</h3>
-            <button class="btn btn-cyan" onclick="abrirModalPago()">+ Registrar Boleta Bancaria</button>
+            <div class="panel-actions">
+              <button class="btn btn-outline btn-sm" onclick="descargarBoletasRevisionCSV()">📥 Descargar Boletas en Revisión</button>
+              <button class="btn btn-cyan" onclick="abrirModalPago()">+ Registrar Boleta Bancaria</button>
+            </div>
           </div>
           <h4 style="color:var(--cyan);margin-bottom:0.6rem;">Boletas en revisión</h4>
           <div class="table-responsive">
@@ -562,6 +625,23 @@
           </div>
         </div>
       </main>
+    </div>
+  </div>
+
+  <!-- MODAL DE BIENVENIDA Y SELECCIÓN DE CICLO ESCOLAR -->
+  <div id="modalBienvenidaCiclo" class="modal oculto">
+    <div class="modal-content bienvenida-modal-box">
+      <img src="logo.png" alt="Logo COMPURED" class="bienvenida-logo" />
+      <h3 id="tituloBienvenidaUsuario" class="bienvenida-saludo">Buenos días</h3>
+      <p class="bienvenida-texto">
+        Para evitar inscribir o registrar movimientos en un año equivocado, seleccione el <strong>ciclo escolar</strong> en el que desea trabajar:
+      </p>
+      <div class="form-group">
+        <select id="selectCicloBienvenida" class="bienvenida-select"></select>
+      </div>
+      <div class="modal-footer" style="justify-content:center;">
+        <button type="button" class="btn btn-cyan btn-block" onclick="confirmarCicloBienvenida()">✓ Trabajar en este Ciclo</button>
+      </div>
     </div>
   </div>
 
@@ -811,7 +891,7 @@
           <label>Meses o Conceptos Pendientes *</label>
           <div id="listaConceptosAdmin" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:0.45rem;background:rgba(5,8,17,0.75);border:1px solid var(--border);padding:0.7rem;border-radius:10px;"></div>
         </div>
-        <div class="form-group"><label>Número de Depósito / Boleta *</label><input type="text" id="pagoNumBoleta" required /></div>
+        <div class="form-group"><label>Número de Depósito / Boleta (mín. 8 números) *</label><input type="text" id="pagoNumBoleta" required /></div>
         <div class="form-group"><label>Fecha del Depósito *</label><input type="date" id="pagoFecha" required /></div>
         <div class="form-group">
           <label>Hora del depósito: <span class="req-asterisco">*</span></label>
@@ -910,6 +990,7 @@
     const sesion = exigirRol("Director");
     let datos = { ciclos: [], reglasUnidades: {}, gastosFijos: [], grupos: [], estudiantes: [], pagos: [], notas: [], gastos: [], usuarios: [], bitacora: [] };
     let grafica = null;
+    let bienvenidaMostrada = false;
 
     const CONCEPTOS_UNIDADES = [
       "Inscripción", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -922,7 +1003,68 @@
       "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "SOLVENCIA"
     ];
 
-    if (sesion) cargarDatos();
+    if (sesion) iniciarPortalDirector();
+
+    function validarNumeroBoletaMin8(valor) {
+      const digitos = String(valor || "").trim().replace(/\D/g, "");
+      if (digitos.length < 8) {
+        alert("Boleta no válida");
+        return false;
+      }
+      return true;
+    }
+
+    function obtenerSaludoPorHora() {
+      const hora = new Date().getHours();
+      if (hora >= 5 && hora < 12) return "Buenos días";
+      if (hora >= 12 && hora < 19) return "Buenas tardes";
+      return "Buenas noches";
+    }
+
+    function obtenerCicloPorDefectoOrdenador(listaCiclos) {
+      const anioOrdenador = String(new Date().getFullYear());
+      const ordenados = [...listaCiclos].sort();
+      if (ordenados.includes(anioOrdenador)) return anioOrdenador;
+      const anteriores = ordenados.filter(c => c <= anioOrdenador);
+      return anteriores.length ? anteriores[anteriores.length - 1] : ordenados[ordenados.length - 1];
+    }
+
+    async function iniciarPortalDirector() {
+      const anioOrdenador = String(new Date().getFullYear());
+      document.getElementById("selectCicloGlobal").value = anioOrdenador;
+      await cargarDatos();
+      mostrarModalBienvenidaCiclo(datos.ciclos);
+    }
+
+    function mostrarModalBienvenidaCiclo(listaCiclos) {
+      if (bienvenidaMostrada) return;
+      bienvenidaMostrada = true;
+      const ciclosDisponibles = (listaCiclos && listaCiclos.length) ? [...listaCiclos].sort() : [String(new Date().getFullYear())];
+      const cicloSugerido = obtenerCicloPorDefectoOrdenador(ciclosDisponibles);
+      const saludo = obtenerSaludoPorHora();
+
+      document.getElementById("tituloBienvenidaUsuario").textContent = `${saludo}, ${sesion.nombre}`;
+      const selBienvenida = document.getElementById("selectCicloBienvenida");
+      selBienvenida.innerHTML = ciclosDisponibles.map(c => `<option value="${c}">Ciclo Escolar ${c}</option>`).join("");
+      selBienvenida.value = cicloSugerido;
+
+      document.getElementById("modalBienvenidaCiclo").classList.remove("oculto");
+    }
+
+    async function confirmarCicloBienvenida() {
+      const cicloElegido = document.getElementById("selectCicloBienvenida").value;
+      const selGlobal = document.getElementById("selectCicloGlobal");
+      const cambio = selGlobal.value !== cicloElegido;
+      selGlobal.value = cicloElegido;
+      document.getElementById("modalBienvenidaCiclo").classList.add("oculto");
+      if (cambio) {
+        await cargarDatos();
+      } else {
+        document.getElementById("lblCicloTablaEst").textContent = cicloElegido;
+        document.getElementById("lblCicloFinanzas").textContent = cicloElegido;
+        document.getElementById("lblCicloDesglose").textContent = cicloElegido;
+      }
+    }
 
     function obtenerFechaLocalISO() {
       const hoy = new Date();
@@ -1017,8 +1159,9 @@
       if (!listaCiclos || !listaCiclos.length) return;
       const sel = document.getElementById("selectCicloGlobal");
       const actual = sel.value;
-      sel.innerHTML = listaCiclos.map(c => `<option value="${c}">Ciclo ${c}</option>`).join("");
-      sel.value = listaCiclos.includes(actual) ? actual : listaCiclos[listaCiclos.length - 1];
+      const ordenados = [...listaCiclos].sort();
+      sel.innerHTML = ordenados.map(c => `<option value="${c}">Ciclo ${c}</option>`).join("");
+      sel.value = ordenados.includes(actual) ? actual : obtenerCicloPorDefectoOrdenador(ordenados);
       document.getElementById("lblCicloTablaEst").textContent = sel.value;
       document.getElementById("lblCicloFinanzas").textContent = sel.value;
       document.getElementById("lblCicloDesglose").textContent = sel.value;
@@ -1035,9 +1178,22 @@
       } catch (err) { alert(err.message); }
     }
 
+    async function eliminarCicloEscolar() {
+      const ciclo = document.getElementById("selectCicloGlobal").value;
+      if (!ciclo) return;
+      if (!confirm(`¿Seguro que desea eliminar el ciclo escolar ${ciclo}?`)) return;
+      try {
+        const res = await llamarAPI("eliminarCiclo", { ciclo });
+        sincronizarSelectCiclos(res.ciclos);
+        document.getElementById("selectCicloGlobal").value = res.cicloActual;
+        alert(res.mensaje);
+        cargarDatos();
+      } catch (err) { alert(err.message); }
+    }
+
     async function cargarDatos() {
       try {
-        const cicloSel = document.getElementById("selectCicloGlobal").value;
+        const cicloSel = document.getElementById("selectCicloGlobal").value || String(new Date().getFullYear());
         datos = await llamarAPI("obtenerDashboard", {
           ciclo: cicloSel,
           sedeFiltro: document.getElementById("filtroSedeDirector").value,
@@ -1318,6 +1474,58 @@
       } catch (err) { alert(err.message); }
     }
 
+    function descargarBoletasRevisionCSV() {
+      const rev = datos.pagos.filter(p => p.estado_pago === "En revisión");
+      if (!rev.length) {
+        alert("No hay boletas en revisión para descargar en este momento.");
+        return;
+      }
+
+      const encabezados = [
+        "No. Boleta / Deposito",
+        "Fecha Deposito",
+        "Hora Deposito",
+        "Monto (Q)",
+        "Concepto / Mes",
+        "Codigo Estudiante",
+        "Estudiante",
+        "Sede",
+        "Curso y Grupo",
+        "Registrado Por",
+        "Comprobante"
+      ];
+
+      const filas = rev.map(p => {
+        const est = datos.estudiantes.find(e => String(e.id_estudiante) === String(p.id_estudiante)) || {};
+        return [
+          p.numero_boleta || "",
+          String(p.fecha_deposito || "").slice(0, 10),
+          p.hora_deposito || "",
+          Number(p.monto || 0).toFixed(2),
+          p.mes_correspondiente || "",
+          est.codigo_estudiante || p.id_estudiante || "",
+          est.nombre_completo || "",
+          p.sede || est.sede || "",
+          est.curso ? `${est.curso} (${est.nombre_grupo || ""})` : "",
+          p.registrado_por || "",
+          (p.url_comprobante && String(p.url_comprobante).startsWith("http")) ? p.url_comprobante : "Sin archivo"
+        ];
+      });
+
+      const cicloActual = document.getElementById("selectCicloGlobal").value || "";
+      const csv = "\uFEFF" + [encabezados, ...filas]
+        .map(fila => fila.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Boletas_En_Revision_Ciclo_${cicloActual}_${obtenerFechaLocalISO()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     function renderizarPagos() {
       const rev = datos.pagos.filter(p => p.estado_pago === "En revisión");
       document.getElementById("tbodyBoletasRevision").innerHTML = rev.length ? rev.map(p => {
@@ -1429,6 +1637,9 @@
 
     async function guardarPagoForm(e) {
       e.preventDefault();
+      const numBoletaInput = document.getElementById("pagoNumBoleta").value;
+      if (!validarNumeroBoletaMin8(numBoletaInput)) return;
+
       const seleccionados = [...document.querySelectorAll(".chk-concepto-adm:checked")].map(c => c.value);
       if (!seleccionados.length) return alert("Selecciona al menos un mes o concepto.");
       const sel = document.getElementById("pagoEstSelect");
@@ -1444,7 +1655,7 @@
           sede: sel.options[sel.selectedIndex].dataset.sede,
           conceptos: seleccionados,
           mes_correspondiente: seleccionados[0],
-          numero_boleta: document.getElementById("pagoNumBoleta").value,
+          numero_boleta: numBoletaInput,
           fecha_deposito: document.getElementById("pagoFecha").value,
           hora_deposito: horaSeleccionada,
           monto: document.getElementById("pagoMonto").value,

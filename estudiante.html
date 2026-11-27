@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050811" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
   <title>Portal Estudiantil — COMPURED y Compucenter</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
@@ -65,6 +69,9 @@
     .sidebar-backdrop.activo {
       display: block;
     }
+    .btn-salir-movil {
+      display: none;
+    }
 
     @media (max-width: 820px) {
       .app-layout {
@@ -79,12 +86,33 @@
         bottom: 0;
         width: 265px;
         max-width: 82vw;
+        height: 100dvh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
         z-index: 1000;
         transform: translateX(-100%);
         transition: transform 0.25s ease;
       }
       .sidebar.movil-abierto {
         transform: translateX(0);
+      }
+      .sidebar-menu {
+        flex: 1 1 auto;
+        overflow-y: auto;
+      }
+      .sidebar-footer {
+        margin-top: auto;
+        flex-shrink: 0;
+        padding-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+      }
+      .btn-salir-movil {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
       }
       .main-workspace {
         width: 100%;
@@ -187,6 +215,7 @@
           <strong id="lblUsuarioNombre">Estudiante</strong>
           <span class="badge badge-rol" id="lblUsuarioRol">Estudiante</span>
           <span class="badge badge-sede" id="lblUsuarioSede">Sede</span>
+          <button class="btn btn-danger btn-sm btn-salir-movil" onclick="cerrarSesion()">🚪 Salir</button>
         </div>
         <div class="panel-actions">
           <span class="badge badge-rol" id="lblCicloEstudiante">Ciclo</span>
@@ -248,7 +277,7 @@
           <label>Meses o Conceptos a Cubrir *</label>
           <div id="estListaConceptos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:0.4rem;background:rgba(5,8,17,0.75);border:1px solid var(--border);padding:0.65rem;border-radius:10px;"></div>
         </div>
-        <div class="form-group"><label>Número de Depósito / Boleta *</label><input type="text" id="estPagoBoleta" required /></div>
+        <div class="form-group"><label>Número de Depósito / Boleta (mín. 8 números) *</label><input type="text" id="estPagoBoleta" required /></div>
         <div class="form-group"><label>Fecha del Depósito *</label><input type="date" id="estPagoFecha" required /></div>
         <div class="form-group">
           <label>Hora del depósito: <span class="req-asterisco">*</span></label>
@@ -398,158 +427,137 @@
         const banner = document.getElementById("bannerSolvencia");
         if (sol.solvente) {
           banner.style.borderColor = "rgba(16,185,129,0.5)";
-          banner.innerHTML = `<strong style="color:#34d399;">✓ Estado: ${est.estado || "Solvente"}</strong> — Al día con sus pagos registrados conforme a la fecha actual.`;
+          banner.innerHTML = `<span class="badge badge-green">SOLVENTE</span> <strong>Al día en su solvencia académica y administrativa.</strong>`;
         } else {
           banner.style.borderColor = "rgba(239,68,68,0.5)";
-          const resumenPend = (sol.pendientes || []).slice(0, 3).join(", ");
-          const extraPend = (sol.pendientes || []).length > 3 ? ` (+${sol.pendientes.length - 3} más)` : "";
-          banner.innerHTML = `<strong style="color:#f87171;">⚠ Pendientes (${(sol.pendientes || []).length}) — Saldo estimado: Q${Number(sol.deudaTotal || 0).toFixed(2)}</strong><br><small style="color:var(--muted);">${resumenPend}${extraPend}${sol.enRevision?.length ? ` • En revisión: ${sol.enRevision.join(", ")}` : ""}</small>`;
+          const deudaFmt = Number(sol.deudaTotal || 0).toFixed(2);
+          banner.innerHTML = `<span class="badge badge-red">PENDIENTE</span> <strong>Estado de solvencia:</strong> ${sol.motivoBloqueo} (Saldo pendiente estimado: <strong>Q${deudaFmt}</strong>).`;
         }
 
         document.getElementById("infoEstudiante").innerHTML = `
-          <div class="card"><small>Código de Acceso</small><h3>${est.codigo_estudiante}</h3></div>
-          <div class="card"><small>Sede</small><h3>${est.sede}</h3></div>
-          <div class="card"><small>Curso</small><h3>${est.curso}</h3></div>
-          <div class="card"><small>Grupo y Horario</small><h3>${est.nombre_grupo} (${est.dias} ${est.horario})</h3></div>
-          <div class="card"><small>Cuota Mensual</small><h3>Q${Number(est.cuota_mensual_aplicable || 0).toFixed(2)}</h3></div>
-          <div class="card"><small>Encargado</small><h3>${est.nombre_encargado} (${est.telefono_encargado})</h3></div>
+          <div><strong>Código:</strong> ${est.codigo_estudiante}</div>
+          <div><strong>Código MINEDUC:</strong> ${est.codigo_mineduc || "No registrado"}</div>
+          <div><strong>Nombre:</strong> ${est.nombre_completo}</div>
+          <div><strong>Estado:</strong> ${est.estado || "Activo"}</div>
+          <div><strong>Sede:</strong> ${est.sede} (${est.aldea_sector || "General"})</div>
+          <div><strong>Curso:</strong> ${est.curso}</div>
+          <div><strong>Grupo / Horario:</strong> ${est.nombre_grupo} (${est.dias} ${est.horario})</div>
+          <div><strong>Cuota Mensual:</strong> Q${Number(est.cuota_mensual_aplicable || 0).toFixed(2)}</div>
         `;
 
-        const badgeNotas = document.getElementById("estadoBloqueoNotas");
-        const avisoBloqueo = document.getElementById("bloqueoNotasAviso");
         const unidades = cal.unidades || [];
-        const bloqueadas = unidades.filter(u => !u.disponible);
+        const gridNotas = document.getElementById("gridNotasPortal");
+        const aviso = document.getElementById("bloqueoNotasAviso");
+        const badgeNotas = document.getElementById("estadoBloqueoNotas");
 
-        if (cal.todasDisponibles) {
+        const bloqueadas = unidades.filter(u => !u.disponible);
+        if (bloqueadas.length === 0) {
           badgeNotas.className = "badge badge-green";
-          badgeNotas.textContent = "Todas las unidades habilitadas";
-          avisoBloqueo.classList.add("oculto");
+          badgeNotas.textContent = "Todas las unidades disponibles";
+          aviso.classList.add("oculto");
         } else {
           badgeNotas.className = "badge badge-red";
-          badgeNotas.textContent = `${bloqueadas.length} unidad(es) pendiente(s) de solvencia`;
-          avisoBloqueo.classList.remove("oculto");
-          avisoBloqueo.innerHTML = `
-            <strong style="color:#f87171;">🔒 Algunas unidades están bloqueadas por requisitos de pago</strong>
-            <ul style="margin:0.5rem 0 0 1.2rem;color:var(--muted);font-size:0.85rem;">
-              ${bloqueadas.map(b => `<li><strong>Unidad ${b.unidad}:</strong> requiere aprobar <strong>${b.faltantes.join(", ")}</strong>.</li>`).join("")}
-            </ul>
-          `;
+          badgeNotas.textContent = `${unidades.length - bloqueadas.length} de ${unidades.length} unidades visibles`;
+          aviso.classList.remove("oculto");
+          aviso.innerHTML = `<h4 style="color:#f87171;margin-bottom:0.4rem;">Algunas unidades están pendientes de requisitos de solvencia</h4>` +
+            bloqueadas.map(u => `<p style="margin-bottom:0.25rem;font-size:0.85rem;">• <strong>Unidad ${u.unidad}:</strong> requiere aprobar <em>${u.faltantes.join(", ")}</em>.</p>`).join("");
         }
 
-        document.getElementById("gridNotasPortal").innerHTML = unidades.map(u => {
-          const tieneNota = u.disponible && u.valor !== "" && u.valor !== null && !isNaN(Number(u.valor));
-          const num = tieneNota ? Number(u.valor) : null;
-          const colorClass = !u.disponible ? "" : (num === null ? "" : (num >= 60 ? "green" : "red"));
+        const colores = ["blue", "green", "blue", "green"];
+        gridNotas.innerHTML = unidades.map((u, idx) => {
+          if (!u.disponible) {
+            return `
+              <div class="card stat-card red">
+                <span>Unidad ${u.unidad}</span>
+                <h2 style="font-size:1.1rem;">Bloqueada</h2>
+                <small style="color:var(--muted);">Falta: ${u.faltantes.join(", ")}</small>
+              </div>
+            `;
+          }
+          const valTxt = (u.valor !== "" && u.valor !== null && u.valor !== undefined) ? u.valor : "-";
           return `
-            <div class="card stat-card ${colorClass}">
+            <div class="card stat-card ${colores[idx]}">
               <span>Unidad ${u.unidad}</span>
-              <h2>${!u.disponible ? "🔒" : (num !== null ? num : "-")}</h2>
-              <small style="color:var(--muted);display:block;margin-top:0.35rem;">
-                ${!u.disponible ? `Falta aprobar: ${u.faltantes.join(", ")}` : "Habilitada"}
-              </small>
+              <h2>${valTxt}</h2>
+              <small style="color:#34d399;">Habilitada</small>
             </div>
           `;
         }).join("");
 
-        document.getElementById("promedioPortal").textContent = cal.promedioVisible !== null ? cal.promedioVisible : "Pendiente de desbloqueo";
+        document.getElementById("promedioPortal").textContent = cal.promedioVisible !== null ? cal.promedioVisible : "Pendiente";
         document.getElementById("estadoFinalPortal").textContent = cal.estado_final || "Pendiente";
 
-        const pagos = portalData.pagos || [];
-        document.getElementById("tbodyPagosEst").innerHTML = pagos.length
-          ? pagos.slice().reverse().map(p => {
-              const estPago = String(p.estado_pago || "").trim();
-              const badgeCls = estPago === "Pagado" ? "badge-green" : (estPago === "Rechazado" ? "badge-red" : "badge-rol");
+        document.getElementById("tbodyPagosEst").innerHTML = portalData.pagos.length
+          ? portalData.pagos.slice().reverse().map(p => {
               const fechaTxt = String(p.fecha_deposito || "").slice(0, 10);
               const horaTxt = p.hora_deposito ? `<br><small style="color:var(--cyan);">${p.hora_deposito}</small>` : "";
-              return `
-                <tr>
-                  <td>${p.mes_correspondiente}</td>
-                  <td>Q${Number(p.monto || 0).toFixed(2)}</td>
-                  <td>#${p.numero_boleta}</td>
-                  <td>${fechaTxt}${horaTxt}</td>
-                  <td><span class="badge ${badgeCls}">${estPago}</span></td>
-                  <td>${p.url_comprobante && String(p.url_comprobante).startsWith("http") ? `<a href="${p.url_comprobante}" target="_blank" style="color:var(--cyan);">Ver comprobante</a>` : "-"}</td>
-                </tr>
-              `;
+              return `<tr>
+                <td>${p.mes_correspondiente}</td>
+                <td>Q${Number(p.monto || 0).toFixed(2)}</td>
+                <td>#${p.numero_boleta}</td>
+                <td>${fechaTxt}${horaTxt}</td>
+                <td><span class="badge badge-rol">${p.estado_pago}</span></td>
+                <td>${p.url_comprobante && String(p.url_comprobante).startsWith("http") ? `<a href="${p.url_comprobante}" target="_blank" style="color:var(--cyan);">Ver</a>` : "-"}</td>
+              </tr>`;
             }).join("")
-          : `<tr><td colspan="6">Aún no has registrado boletas en este ciclo.</td></tr>`;
-      } catch (err) {
-        alert(err.message);
-      }
+          : `<tr><td colspan="6">Aún no ha registrado boletas en este ciclo.</td></tr>`;
+      } catch (err) { alert(err.message); }
     }
 
     function abrirModalSubirBoletaEst() {
       if (!portalData) return;
       document.querySelector("#modalSubirBoletaEst form").reset();
       llenarSelectoresHora12("estHoraH", "estHoraM", "estHoraS", "estHoraAP");
-
-      const est = portalData.estudiante;
-      const mesesGrupo = portalData.solvencia?.mesesDisponiblesGrupo || ["Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre"];
-      const todos = ["Inscripción", ...mesesGrupo];
+      const mesesBase = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+      const todos = ["Inscripción", ...mesesBase];
       const cubiertos = portalData.conceptosCubiertos || [];
-      const disponibles = todos.filter(c => !cubiertos.includes(c));
-
+      const pendientes = todos.filter(c => !cubiertos.includes(c));
       const box = document.getElementById("estListaConceptos");
-      if (!disponibles.length) {
-        box.innerHTML = `<span style="color:#34d399;font-size:0.84rem;">✓ No tienes meses o conceptos pendientes por subir.</span>`;
-        document.getElementById("estPagoMonto").value = "0.00";
+
+      if (!pendientes.length) {
+        box.innerHTML = `<span style="color:#34d399;font-size:0.82rem;">✓ Ya no tiene meses pendientes en este ciclo.</span>`;
       } else {
-        box.innerHTML = disponibles.map((m, i) => `
-          <label style="display:flex;align-items:center;gap:0.35rem;color:var(--white);font-size:0.84rem;cursor:pointer;">
-            <input type="checkbox" class="chk-concepto-est" value="${m}" ${i === 0 ? "checked" : ""} onchange="calcularMontoEst()" style="width:auto;" />
+        box.innerHTML = pendientes.map((m, i) => `
+          <label style="display:flex;align-items:center;gap:0.35rem;color:var(--white);font-size:0.82rem;cursor:pointer;">
+            <input type="checkbox" class="chk-concepto-est" value="${m}" ${i === 0 ? "checked" : ""} style="width:auto;" />
             <span>${m}</span>
           </label>
         `).join("");
-        box.dataset.cuotaInsc = Number(est.cuota_inscripcion || 0);
-        box.dataset.cuotaMes = Number(est.cuota_mensual_aplicable || 0);
-        calcularMontoEst();
       }
-
       document.getElementById("modalSubirBoletaEst").classList.remove("oculto");
-    }
-
-    function calcularMontoEst() {
-      const box = document.getElementById("estListaConceptos");
-      const cInsc = Number(box.dataset.cuotaInsc || 0);
-      const cMes = Number(box.dataset.cuotaMes || 0);
-      let suma = 0;
-      document.querySelectorAll(".chk-concepto-est:checked").forEach(chk => {
-        suma += chk.value === "Inscripción" ? cInsc : cMes;
-      });
-      document.getElementById("estPagoMonto").value = suma.toFixed(2);
     }
 
     async function enviarBoletaEstudiante(e) {
       e.preventDefault();
+      const numBoletaEst = String(document.getElementById("estPagoBoleta").value || "").trim();
+      if (numBoletaEst.replace(/\D/g, "").length < 8) {
+        alert("Boleta no válida");
+        return;
+      }
+
       const seleccionados = [...document.querySelectorAll(".chk-concepto-est:checked")].map(c => c.value);
       if (!seleccionados.length) return alert("Seleccione al menos un mes o concepto.");
       const file = document.getElementById("estPagoArchivo").files[0];
       let archivoBase64 = "", nombreArchivo = "";
-      if (file) {
-        archivoBase64 = await convertirArchivoBase64(file);
-        nombreArchivo = file.name;
-      }
+      if (file) { archivoBase64 = await convertirArchivoBase64(file); nombreArchivo = file.name; }
       try {
-        const est = portalData.estudiante;
         const horaSeleccionada = obtenerHora12Seleccionada("estHoraH", "estHoraM", "estHoraS", "estHoraAP");
+        const est = portalData.estudiante;
         alert(await llamarAPI("registrarPago", {
           ciclo_escolar: est.ciclo_escolar,
           id_estudiante: est.id_estudiante,
           sede: est.sede,
           conceptos: seleccionados,
           mes_correspondiente: seleccionados[0],
-          numero_boleta: document.getElementById("estPagoBoleta").value,
+          numero_boleta: numBoletaEst,
           fecha_deposito: document.getElementById("estPagoFecha").value,
           hora_deposito: horaSeleccionada,
           monto: document.getElementById("estPagoMonto").value,
           archivoBase64,
           nombreArchivo
         }));
-        cerrarModales();
-        cargarPortal();
-      } catch (err) {
-        alert(err.message);
-      }
+        cerrarModales(); cargarPortal();
+      } catch (err) { alert(err.message); }
     }
   </script>
 </body>
